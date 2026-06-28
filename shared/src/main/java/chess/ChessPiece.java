@@ -58,6 +58,8 @@ public class ChessPiece {
         ChessPiece piece = board.getPiece(position);
         if (piece.getPieceType() == PieceType.BISHOP) {
             return MovementCalculator.Sliders.calculate(board,piece,position,new int[][] {{1,1},{1,-1},{-1,1},{-1,-1}});
+        } else if (piece.getPieceType() == PieceType.ROOK) {
+            return MovementCalculator.Sliders.calculate(board,piece,position,new int[][] {{1,0},{-1,0},{0,1},{0,-1}});
         }
 
         return new ArrayList<>();
