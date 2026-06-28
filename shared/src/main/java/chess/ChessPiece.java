@@ -62,8 +62,9 @@ public class ChessPiece {
             return MovementCalculator.Sliders.calculate(board,piece,position,new int[][] {{1,0},{-1,0},{0,1},{0,-1}});
         } else if (piece.getPieceType() == PieceType.QUEEN) {
             return MovementCalculator.Sliders.calculate(board,piece,position,new int[][] {{1,1},{1,-1},{-1,1},{-1,-1},{1,0},{-1,0},{0,1},{0,-1}});
+        } else if (piece.getPieceType() == PieceType.KING) {
+            return MovementCalculator.Steppers.calculate(board, piece, position, new int[][]{{1, 1}, {1, -1}, {-1, 1}, {-1, -1}, {1, 0}, {-1, 0}, {0, 1}, {0, -1}});
         }
-
         return new ArrayList<>();
     }
 

@@ -32,7 +32,6 @@ public class MovementCalculator {
             List<ChessMove> moves = new ArrayList<>();
 
             for (int[] dir : directions) {
-
                 int j = position.getRow();
                 int k = position.getColumn();
 
@@ -49,6 +48,25 @@ public class MovementCalculator {
 
                     recordMoves(moves,position,j,k);
                 }
+            }
+            return moves;
+        }
+    }
+
+    public static class Steppers {
+        public static Collection<ChessMove> calculate(ChessBoard board, ChessPiece piece, ChessPosition position, int[][] directions) {
+            List<ChessMove> moves = new ArrayList<>();
+
+            for(int[] dir:directions) {
+                int j = position.getRow() + dir[0];
+                int k = position.getColumn() + dir[1];
+
+                if(isOutOfBounds(j,k)) {continue;}
+
+                ChessPiece obstacle = getObstacle(board,j,k);
+
+                if(isBlocked(obstacle,piece)) {continue;}
+                recordMoves(moves,position,j,k);
             }
             return moves;
         }
