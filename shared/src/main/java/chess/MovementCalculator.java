@@ -7,6 +7,30 @@ import java.util.List;
 
 public class MovementCalculator {
 
+    private static boolean isOutOfBounds(int row, int col) {
+        return row < 1 || row > 8 || col < 1 || col > 8;
+    }
+
+    private static ChessPiece getObstacle(ChessBoard board, int row, int col) {
+        return board.getPiece(new ChessPosition(row,col));
+    }
+
+    private static boolean isBlocked(ChessPiece obstacle, ChessPiece piece) {
+        return obstacle != null && obstacle.getTeamColor() == piece.getTeamColor();
+    }
+
+    private static boolean isCapture(ChessPiece obstacle, ChessPiece piece) {
+        return obstacle != null && obstacle.getTeamColor() != piece.getTeamColor();
+    }
+
+    private static void recordMoves(List<ChessMove> moves, ChessPosition from, int toRow, int toCol){
+        moves.add(new ChessMove(from, new ChessPosition(toRow, toCol), null));
+    }
+
+    private static void recordMoves(List<ChessMove> moves, ChessPosition from, int toRow, int toCol, ChessPiece.PieceType promotion){
+        moves.add(new ChessMove(from, new ChessPosition(toRow, toCol), promotion));
+    }
+
     public static class Sliders {
         public static Collection<ChessMove> calculate(ChessBoard board, ChessPiece piece, ChessPosition position, int[][] directions) {
             List<ChessMove> moves = new ArrayList<>();
@@ -38,30 +62,6 @@ public class MovementCalculator {
             }
             return moves;
         }
-    }
-
-    private static boolean isOutOfBounds(int row, int col) {
-        return row < 1 || row > 8 || col < 1 || col > 8;
-    }
-
-    private static ChessPiece getObstacle(ChessBoard board, int row, int col) {
-        return board.getPiece(new ChessPosition(row,col));
-    }
-
-    private static boolean isBlocked(ChessPiece obstacle, ChessPiece piece) {
-        return obstacle != null && obstacle.getTeamColor() == piece.getTeamColor();
-    }
-
-    private static boolean isCapture(ChessPiece obstacle, ChessPiece piece) {
-        return obstacle != null && obstacle.getTeamColor() != piece.getTeamColor();
-    }
-
-    private static void recordMoves(List<ChessMove> moves, ChessPosition from, int toRow, int toCol){
-        moves.add(new ChessMove(from, new ChessPosition(toRow, toCol), null));
-    }
-
-    private static void recordMoves(List<ChessMove> moves, ChessPosition from, int toRow, int toCol, ChessPiece.PieceType promotion){
-        moves.add(new ChessMove(from, new ChessPosition(toRow, toCol), promotion));
     }
 
     public static class Steppers {
