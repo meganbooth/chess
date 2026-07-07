@@ -15,11 +15,23 @@ public class ChessGame {
 
     private TeamColor turn;
     private ChessBoard board;
+    private boolean whiteKingMoved;
+    private boolean blackKingMoved;
+    private boolean whiteKingsideRookMoved;
+    private boolean whiteQueensideRookMoved;
+    private boolean blackKingsideRookMoved;
+    private boolean blackQueensideRookMoved;
 
     public ChessGame() {
         this.turn = TeamColor.WHITE;
         this.board = new ChessBoard();
         this.board.resetBoard();
+        this.whiteKingMoved = false;
+        this.blackKingMoved = false;
+        this.whiteKingsideRookMoved = false;
+        this.whiteQueensideRookMoved = false;
+        this.blackKingsideRookMoved = false;
+        this.blackQueensideRookMoved = false;
     }
 
     /**
@@ -91,6 +103,19 @@ public class ChessGame {
         }
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         if(validMoves.contains(move)){
+            if(move.getStartPosition().equals(new ChessPosition(1,1))) {
+                whiteQueensideRookMoved = true;
+            } else if(move.getStartPosition().equals(new ChessPosition(1,8))){
+                whiteKingsideRookMoved = true;
+            } else if(move.getStartPosition().equals(new ChessPosition(1,5))){
+                whiteKingMoved = true;
+            } else if(move.getStartPosition().equals(new ChessPosition(8,1))){
+                blackQueensideRookMoved = true;
+            } else if(move.getStartPosition().equals(new ChessPosition(8,8))){
+                blackKingsideRookMoved = true;
+            } else if(move.getStartPosition().equals(new ChessPosition(8,5))){
+                blackKingMoved = true;
+            }
             board.addPiece(move.getEndPosition(),piece);
             board.addPiece(move.getStartPosition(),null);
             if(move.getPromotionPiece() != null){
