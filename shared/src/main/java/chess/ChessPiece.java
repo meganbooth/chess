@@ -57,15 +57,20 @@ public class ChessPiece {
 
         ChessPiece piece = board.getPiece(position);
         if (piece.getPieceType() == PieceType.BISHOP) {
-            return MovementCalculator.Sliders.calculate(board,piece,position,new int[][] {{1,1},{1,-1},{-1,1},{-1,-1}});
+            return MovementCalculator.Sliders.calculate(board,piece,position,
+                    new int[][] {{1,1},{1,-1},{-1,1},{-1,-1}});
         } else if (piece.getPieceType() == PieceType.ROOK) {
-            return MovementCalculator.Sliders.calculate(board,piece,position,new int[][] {{1,0},{-1,0},{0,1},{0,-1}});
+            return MovementCalculator.Sliders.calculate(board,piece,position,
+                    new int[][] {{1,0},{-1,0},{0,1},{0,-1}});
         } else if (piece.getPieceType() == PieceType.QUEEN) {
-            return MovementCalculator.Sliders.calculate(board,piece,position,new int[][] {{1,1},{1,-1},{-1,1},{-1,-1},{1,0},{-1,0},{0,1},{0,-1}});
+            return MovementCalculator.Sliders.calculate(board,piece,position,
+                    new int[][] {{1,1},{1,-1},{-1,1},{-1,-1},{1,0},{-1,0},{0,1},{0,-1}});
         } else if (piece.getPieceType() == PieceType.KING) {
-            return MovementCalculator.Steppers.calculate(board, piece, position, new int[][]{{1, 1}, {1, -1}, {-1, 1}, {-1, -1}, {1, 0}, {-1, 0}, {0, 1}, {0, -1}});
+            return MovementCalculator.Steppers.calculate(board, piece, position,
+                    new int[][]{{1,1},{1,-1},{-1,1},{-1,-1},{1,0},{-1,0},{0,1},{0,-1}});
         } else if (piece.getPieceType() == PieceType.KNIGHT) {
-            return MovementCalculator.Steppers.calculate(board, piece, position, new int[][]{{2, 1}, {2, -1}, {-2, 1}, {-2, -1}, {1, 2}, {-1, 2}, {1, -2}, {-1, -2}});
+            return MovementCalculator.Steppers.calculate(board, piece, position,
+                    new int[][]{{2,1},{2,-1},{-2,1},{-2,-1},{1,2},{-1,2},{1,-2},{-1,-2}});
         } else if (piece.getPieceType() == PieceType.PAWN) {
             return MovementCalculator.Pawns.calculate(board,piece,position);
         }
@@ -74,7 +79,9 @@ public class ChessPiece {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessPiece that = (ChessPiece) o;
         return pieceColor == that.pieceColor && type == that.type;
     }

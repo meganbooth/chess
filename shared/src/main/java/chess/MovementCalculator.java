@@ -1,6 +1,5 @@
 package chess;
 
-import java.text.CollationElementIterator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +26,8 @@ public class MovementCalculator {
         moves.add(new ChessMove(from, new ChessPosition(toRow, toCol), null));
     }
 
-    private static void recordMoves(List<ChessMove> moves, ChessPosition from, int toRow, int toCol, ChessPiece.PieceType promotion){
+    private static void recordMoves(List<ChessMove> moves, ChessPosition from,
+                                    int toRow, int toCol, ChessPiece.PieceType promotion){
         moves.add(new ChessMove(from, new ChessPosition(toRow, toCol), promotion));
     }
 
