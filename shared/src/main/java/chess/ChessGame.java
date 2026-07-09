@@ -21,6 +21,7 @@ public class ChessGame {
     private boolean whiteQueensideRookMoved;
     private boolean blackKingsideRookMoved;
     private boolean blackQueensideRookMoved;
+    private ChessPosition pawnDoubleMove;
 
     public ChessGame() {
         this.turn = TeamColor.WHITE;
@@ -32,6 +33,7 @@ public class ChessGame {
         this.whiteQueensideRookMoved = false;
         this.blackKingsideRookMoved = false;
         this.blackQueensideRookMoved = false;
+        this.pawnDoubleMove = null;
     }
 
     /**
@@ -156,6 +158,25 @@ public class ChessGame {
                     }
                 }
             }
+            if(piece.getPieceType() == ChessPiece.PieceType.PAWN && pawnDoubleMove != null){
+                int forward = piece.getTeamColor() == TeamColor.WHITE ? 1 : -1;
+                if(startPosition.getRow() == pawnDoubleMove.getRow()){
+                    if(startPosition.getColumn() == pawnDoubleMove.getColumn()-1 || startPosition.getColumn() == pawnDoubleMove.getColumn()+1){
+                        ChessPiece capturedPawn = board.getPiece(pawnDoubleMove);
+
+                            board.addPiece(new ChessPosition(pawnDoubleMove.getRow() + forward, pawnDoubleMove.getColumn()), piece);
+                        board.addPiece(startPosition, null);
+                        board.addPiece(pawnDoubleMove, null);
+
+                        if(!isInCheck(getTeamTurn())){
+                            moves.add(new ChessMove(startPosition,new ChessPosition(pawnDoubleMove.getRow()+forward, pawnDoubleMove.getColumn()), null));
+                        }
+                        board.addPiece(startPosition, piece);
+                        board.addPiece(new ChessPosition(pawnDoubleMove.getRow() + forward, pawnDoubleMove.getColumn()), null);
+                        board.addPiece(pawnDoubleMove, capturedPawn);
+                    }
+                }
+            }
             for(ChessMove move : allMoves){
                 ChessPiece toSave = board.getPiece(move.getEndPosition());
 
@@ -227,6 +248,18 @@ public class ChessGame {
                     board.addPiece(new ChessPosition(8,4),castle);
                     board.addPiece(new ChessPosition(8,1),null);
                 }
+            }
+            if(piece.getPieceType() == ChessPiece.PieceType.PAWN){
+                if(Math.abs(move.getStartPosition().getRow() - move.getEndPosition().getRow()) == 1 && Math.abs(move.getStartPosition().getColumn() - move.getEndPosition().getColumn()) == 1){
+                    if(pawnDoubleMove != null && pawnDoubleMove.getColumn() == move.getEndPosition().getColumn()){
+                        board.addPiece(pawnDoubleMove, null);
+                    }
+                }
+            }
+            if(piece.getPieceType() == ChessPiece.PieceType.PAWN && Math.abs(move.getStartPosition().getRow() - move.getEndPosition().getRow()) == 2) {
+                pawnDoubleMove = move.getEndPosition();
+            } else {
+                pawnDoubleMove = null;
             }
             if(move.getPromotionPiece() != null){
                 ChessPiece promotedPiece = new ChessPiece(piece.getTeamColor(),move.getPromotionPiece());
