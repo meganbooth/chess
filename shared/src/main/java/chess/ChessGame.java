@@ -15,18 +15,32 @@ public class ChessGame {
 
     private TeamColor turn;
     private ChessBoard board;
+
+    // Castling Vars
     private boolean whiteKingMoved;
-    private boolean blackKingMoved;
     private boolean whiteKingsideRookMoved;
     private boolean whiteQueensideRookMoved;
+
+    private boolean blackKingMoved;
     private boolean blackKingsideRookMoved;
     private boolean blackQueensideRookMoved;
+
+    private static final ChessPosition WHITE_KING_START = new ChessPosition(1,5);
+    private static final ChessPosition WHITE_KINGSIDE_ROOK_START = new ChessPosition(1,8);
+    private static final ChessPosition WHITE_QUEENSIDE_ROOK_START = new ChessPosition(1,1);
+
+    private static final ChessPosition BLACK_KING_START = new ChessPosition(8,5);
+    private static final ChessPosition BLACK_KINGSIDE_ROOK_START = new ChessPosition(8,8);
+    private static final ChessPosition BLACK_QUEENSIDE_ROOK_START = new ChessPosition(8,1);
+
+    // En Passant Vars
     private ChessPosition pawnDoubleMove;
 
     public ChessGame() {
         this.turn = TeamColor.WHITE;
         this.board = new ChessBoard();
         this.board.resetBoard();
+
         this.whiteKingMoved = false;
         this.blackKingMoved = false;
         this.whiteKingsideRookMoved = false;
@@ -34,6 +48,18 @@ public class ChessGame {
         this.blackKingsideRookMoved = false;
         this.blackQueensideRookMoved = false;
         this.pawnDoubleMove = null;
+    }
+
+    private void moveCastlingRook(ChessPosition rookStart, ChessPosition rookEnd){
+        ChessPiece rook = board.getPiece(rookStart);
+        board.addPiece(rookEnd, rook);
+        board.addPiece(rookStart, null);
+    }
+
+    private boolean isDoublePawnMove(ChessMove move, ChessPiece piece){
+        boolean isPawn = piece.getPieceType() == ChessPiece.PieceType.PAWN;
+        boolean isDoubleMove = Math.abs(move.getStartPosition().getRow() - move.getEndPosition().getRow()) == 2;
+        return isPawn && isDoubleMove;
     }
 
     /**
@@ -202,70 +228,81 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = board.getPiece(move.getStartPosition());
+
+        // Validate that a piece exists at the start position
         if(piece == null){
             throw new InvalidMoveException();
         }
+
+        // Validate that it is the correct team's turn
         if(getTeamTurn() != piece.getTeamColor()){
             throw new InvalidMoveException();
         }
+
+        // Validate that the move is legal
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         if(validMoves.contains(move)){
-            if(move.getStartPosition().equals(new ChessPosition(1,1))) {
-                whiteQueensideRookMoved = true;
-            } else if(move.getStartPosition().equals(new ChessPosition(1,8))){
-                whiteKingsideRookMoved = true;
-            } else if(move.getStartPosition().equals(new ChessPosition(1,5))){
+
+            // Update castling flags if a king or rook moves from its starting position
+            if(move.getStartPosition().equals(WHITE_KING_START)) {
                 whiteKingMoved = true;
-            } else if(move.getStartPosition().equals(new ChessPosition(8,1))){
-                blackQueensideRookMoved = true;
-            } else if(move.getStartPosition().equals(new ChessPosition(8,8))){
-                blackKingsideRookMoved = true;
-            } else if(move.getStartPosition().equals(new ChessPosition(8,5))){
+            } else if(move.getStartPosition().equals(WHITE_KINGSIDE_ROOK_START)){
+                whiteKingsideRookMoved = true;
+            } else if(move.getStartPosition().equals(WHITE_QUEENSIDE_ROOK_START)){
+                whiteQueensideRookMoved = true;
+            } else if(move.getStartPosition().equals(BLACK_KING_START)){
                 blackKingMoved = true;
+            } else if(move.getStartPosition().equals(BLACK_KINGSIDE_ROOK_START)){
+                blackKingsideRookMoved = true;
+            } else if(move.getStartPosition().equals(BLACK_QUEENSIDE_ROOK_START)){
+                blackQueensideRookMoved = true;
             }
 
+            // Execute the move
             board.addPiece(move.getEndPosition(),piece);
             board.addPiece(move.getStartPosition(),null);
+
+            // If castling, move the rook to its new position
             if(piece.getPieceType() == ChessPiece.PieceType.KING && Math.abs(move.getStartPosition().getColumn() - move.getEndPosition().getColumn()) == 2) {
-                ChessPiece castle;
                 if(move.getEndPosition().equals(new ChessPosition(1,7))){
-                    castle = board.getPiece(new ChessPosition(1,8));
-                    board.addPiece(new ChessPosition(1,6),castle);
-                    board.addPiece(new ChessPosition(1,8),null);
+                    moveCastlingRook(WHITE_KINGSIDE_ROOK_START, new ChessPosition(1,6));
                 }
                 if(move.getEndPosition().equals(new ChessPosition(1,3))){
-                    castle = board.getPiece(new ChessPosition(1,1));
-                    board.addPiece(new ChessPosition(1,4),castle);
-                    board.addPiece(new ChessPosition(1,1),null);
+                    moveCastlingRook(WHITE_QUEENSIDE_ROOK_START, new ChessPosition(1,4));
                 }
                 if(move.getEndPosition().equals(new ChessPosition(8,7))){
-                    castle = board.getPiece(new ChessPosition(8,8));
-                    board.addPiece(new ChessPosition(8,6),castle);
-                    board.addPiece(new ChessPosition(8,8),null);
+                    moveCastlingRook(BLACK_KINGSIDE_ROOK_START, new ChessPosition(8,6));
                 }
                 if(move.getEndPosition().equals(new ChessPosition(8,3))){
-                    castle = board.getPiece(new ChessPosition(8,1));
-                    board.addPiece(new ChessPosition(8,4),castle);
-                    board.addPiece(new ChessPosition(8,1),null);
+                    moveCastlingRook(BLACK_QUEENSIDE_ROOK_START, new ChessPosition(8,4));
                 }
             }
-            if(piece.getPieceType() == ChessPiece.PieceType.PAWN){
-                if(Math.abs(move.getStartPosition().getRow() - move.getEndPosition().getRow()) == 1 && Math.abs(move.getStartPosition().getColumn() - move.getEndPosition().getColumn()) == 1){
-                    if(pawnDoubleMove != null && pawnDoubleMove.getColumn() == move.getEndPosition().getColumn()){
-                        board.addPiece(pawnDoubleMove, null);
-                    }
-                }
+
+            // Remove the captured pawn if this move is an en passant capture
+            boolean isPawn = piece.getPieceType() == ChessPiece.PieceType.PAWN;
+            boolean isDiagonalMove = Math.abs(move.getStartPosition().getRow() - move.getEndPosition().getRow()) == 1 && Math.abs(move.getStartPosition().getColumn() - move.getEndPosition().getColumn()) == 1;
+            boolean isEnPassant = pawnDoubleMove != null && pawnDoubleMove.getColumn() == move.getEndPosition().getColumn();
+
+            if(isPawn && isDiagonalMove && isEnPassant){
+                board.addPiece(pawnDoubleMove, null);
             }
-            if(piece.getPieceType() == ChessPiece.PieceType.PAWN && Math.abs(move.getStartPosition().getRow() - move.getEndPosition().getRow()) == 2) {
+
+            // Track double pawn move for en passant
+            if(isDoublePawnMove(move, piece)){
                 pawnDoubleMove = move.getEndPosition();
             } else {
                 pawnDoubleMove = null;
             }
+
+            // Handle pawn promotion
             if(move.getPromotionPiece() != null){
-                ChessPiece promotedPiece = new ChessPiece(piece.getTeamColor(),move.getPromotionPiece());
-                board.addPiece(move.getEndPosition(),promotedPiece);
+                ChessPiece promotedPiece = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
+                board.addPiece(move.getEndPosition(), promotedPiece);
             }
+
+            // Switch turns
             setTeamTurn(turn == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
+
         } else {
             throw new InvalidMoveException();
         }
