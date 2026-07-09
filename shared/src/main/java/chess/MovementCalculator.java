@@ -32,7 +32,8 @@ public class MovementCalculator {
     }
 
     public static class Sliders {
-        public static Collection<ChessMove> calculate(ChessBoard board, ChessPiece piece, ChessPosition position, int[][] directions) {
+        public static Collection<ChessMove> calculate(ChessBoard board, ChessPiece piece,
+                                                      ChessPosition position, int[][] directions) {
             List<ChessMove> moves = new ArrayList<>();
 
             for(int[] dir : directions){
@@ -65,7 +66,8 @@ public class MovementCalculator {
     }
 
     public static class Steppers {
-        public static Collection<ChessMove> calculate(ChessBoard board, ChessPiece piece, ChessPosition position, int[][] directions) {
+        public static Collection<ChessMove> calculate(ChessBoard board, ChessPiece piece,
+                                                      ChessPosition position, int[][] directions) {
             List<ChessMove> moves = new ArrayList<>();
 
             for(int[] dir:directions) {
@@ -96,7 +98,8 @@ public class MovementCalculator {
             int nextRow = forward + position.getRow();
             int col = position.getColumn();
 
-            ChessPiece.PieceType[] promos = {ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK, ChessPiece.PieceType.QUEEN};
+            ChessPiece.PieceType[] promos = {ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.KNIGHT,
+                    ChessPiece.PieceType.ROOK, ChessPiece.PieceType.QUEEN};
 
             if(!isOutOfBounds(nextRow,col) && getObstacle(board,nextRow,col) == null) {
                 if(nextRow == promoRow) {

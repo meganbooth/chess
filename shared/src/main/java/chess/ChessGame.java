@@ -96,6 +96,15 @@ public class ChessGame {
         return safeLanding;
     }
 
+    private boolean canEnemyReachKing(ChessPiece enemy, ChessPosition kingPosition, int i, int j) {
+        for (ChessMove move : enemy.pieceMoves(board, new ChessPosition(i, j))) {
+            if (move.getEndPosition().equals(kingPosition)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean hasNoValidMoves(TeamColor teamColor) {
         for(int i = 1; i <= 8; i++){
             for(int j = 1; j <= 8; j++){
@@ -347,11 +356,8 @@ public class ChessGame {
             for(int j = 1; j <= 8; j++){
                 ChessPiece enemy = board.getPiece(new ChessPosition(i,j));
                 if(enemy != null && enemy.getTeamColor() != teamColor) {
-                    for (ChessMove move : enemy.pieceMoves(board, new ChessPosition(i, j))) {
-
-                        if (move.getEndPosition().equals(kingPosition)) {
-                            return true;
-                        }
+                    if(canEnemyReachKing(enemy, kingPosition, i, j)) {
+                        return true;
                     }
                 }
             }
