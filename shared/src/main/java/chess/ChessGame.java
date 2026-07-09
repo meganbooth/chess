@@ -95,6 +95,20 @@ public class ChessGame {
         return safeLanding;
     }
 
+    private boolean hasNoValidMoves(TeamColor teamColor) {
+        for(int i = 1; i <= 8; i++){
+            for(int j = 1; j <= 8; j++){
+                ChessPiece piece = board.getPiece(new ChessPosition(i,j));
+                if(piece != null && piece.getTeamColor() == teamColor){
+                    if(!validMoves(new ChessPosition(i,j)).isEmpty()){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     /**
      * @return Which team's turn it is
      */
@@ -306,6 +320,8 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPosition = null;
+
+        // Find the king's position then check if any enemy piece can capture it
         for(int i = 1; i <= 8; i++){
             for(int j = 1; j <= 8; j++){
                 ChessPiece piece = board.getPiece(new ChessPosition(i,j));
@@ -338,22 +354,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        if(!isInCheck(teamColor)){
-            return false;
-        }
-        for(int i = 1; i <= 8; i++){
-            for(int j = 1; j <= 8; j++){
-                ChessPiece piece = board.getPiece(new ChessPosition(i,j));
-                if(piece != null && piece.getTeamColor() == teamColor){
-                    Collection<ChessMove> validMoves = validMoves(new ChessPosition(i,j));
-                    if(!validMoves.isEmpty()){
-                        return false;
-                    }
-                }
-
-            }
-        }
-        return true;
+        return isInCheck(teamColor) && hasNoValidMoves(teamColor);
     }
 
     /**
@@ -364,22 +365,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        if(isInCheck(teamColor)){
-            return false;
-        }
-        for(int i = 1; i <= 8; i++){
-            for(int j = 1; j <= 8; j++){
-                ChessPiece piece = board.getPiece(new ChessPosition(i,j));
-                if(piece != null && piece.getTeamColor() == teamColor){
-                    Collection<ChessMove> validMoves = validMoves(new ChessPosition(i,j));
-                    if(!validMoves.isEmpty()){
-                        return false;
-                    }
-                }
-
-            }
-        }
-        return true;
+        return !isInCheck(teamColor) && hasNoValidMoves(teamColor);
     }
 
     /**
@@ -391,22 +377,22 @@ public class ChessGame {
         this.board = board;
         ChessPiece piece;
 
-        piece = board.getPiece(new ChessPosition(1,5));
+        piece = board.getPiece(WHITE_KING_START);
         whiteKingMoved = !(piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == TeamColor.WHITE);
 
-        piece = board.getPiece(new ChessPosition(1,8));
+        piece = board.getPiece(WHITE_KINGSIDE_ROOK_START);
         whiteKingsideRookMoved = !(piece != null && piece.getPieceType() == ChessPiece.PieceType.ROOK && piece.getTeamColor() == TeamColor.WHITE);
 
-        piece = board.getPiece(new ChessPosition(1,1));
+        piece = board.getPiece(WHITE_QUEENSIDE_ROOK_START);
         whiteQueensideRookMoved = !(piece != null && piece.getPieceType() == ChessPiece.PieceType.ROOK && piece.getTeamColor() == TeamColor.WHITE);
 
-        piece = board.getPiece(new ChessPosition(8,5));
+        piece = board.getPiece(BLACK_KING_START);
         blackKingMoved = !(piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == TeamColor.BLACK);
 
-        piece = board.getPiece(new ChessPosition(8,8));
+        piece = board.getPiece(BLACK_KINGSIDE_ROOK_START);
         blackKingsideRookMoved = !(piece != null && piece.getPieceType() == ChessPiece.PieceType.ROOK && piece.getTeamColor() == TeamColor.BLACK);
 
-        piece = board.getPiece(new ChessPosition(8,1));
+        piece = board.getPiece(BLACK_QUEENSIDE_ROOK_START);
         blackQueensideRookMoved = !(piece != null && piece.getPieceType() == ChessPiece.PieceType.ROOK && piece.getTeamColor() == TeamColor.BLACK);
     }
 
