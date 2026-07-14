@@ -4,8 +4,10 @@ import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import handler.ClearHandler;
+import handler.RegisterHandler;
 import io.javalin.*;
 import service.ClearService;
+import service.RegisterService;
 
 public class Server {
 
@@ -24,6 +26,10 @@ public class Server {
         var clearService = new ClearService(memoryUserDAO, memoryAuthDAO, memoryGameDAO);
         var clearHandler = new ClearHandler(clearService);
         javalin.delete("/db", ctx -> clearHandler.handle(ctx));
+
+        var registerService = new RegisterService(memoryUserDAO, memoryAuthDAO);
+        var registerHandler = new RegisterHandler(registerService);
+        javalin.post("/user", ctx -> registerHandler.handle(ctx));
     }
 
     public int run(int desiredPort) {
