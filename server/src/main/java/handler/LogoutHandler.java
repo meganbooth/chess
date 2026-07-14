@@ -1,10 +1,8 @@
 package handler;
 
-import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import service.request.LogoutRequest;
-import service.result.LogoutResult;
 
 public class LogoutHandler {
     private final service.LogoutService logoutService;

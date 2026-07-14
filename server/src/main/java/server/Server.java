@@ -3,15 +3,9 @@ package server;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
-import handler.ClearHandler;
-import handler.LoginHandler;
-import handler.LogoutHandler;
-import handler.RegisterHandler;
+import handler.*;
 import io.javalin.*;
-import service.ClearService;
-import service.LoginService;
-import service.LogoutService;
-import service.RegisterService;
+import service.*;
 
 public class Server {
 
@@ -42,6 +36,10 @@ public class Server {
         var logoutService = new LogoutService(memoryAuthDAO);
         var logoutHandler = new LogoutHandler(logoutService);
         javalin.delete("/session", ctx -> logoutHandler.handle(ctx));
+
+        var listGamesService = new ListGamesService(memoryAuthDAO, memoryGameDAO);
+        var listGamesHandler = new ListGamesHandler(listGamesService);
+        javalin.get("/game", ctx -> listGamesHandler.handle(ctx));
     }
 
     public int run(int desiredPort) {
