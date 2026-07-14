@@ -4,9 +4,11 @@ import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import handler.ClearHandler;
+import handler.LoginHandler;
 import handler.RegisterHandler;
 import io.javalin.*;
 import service.ClearService;
+import service.LoginService;
 import service.RegisterService;
 
 public class Server {
@@ -30,6 +32,10 @@ public class Server {
         var registerService = new RegisterService(memoryUserDAO, memoryAuthDAO);
         var registerHandler = new RegisterHandler(registerService);
         javalin.post("/user", ctx -> registerHandler.handle(ctx));
+
+        var loginService = new LoginService(memoryUserDAO, memoryAuthDAO);
+        var loginHandler = new LoginHandler(loginService);
+        javalin.post("/session", ctx -> loginHandler.handle(ctx));
     }
 
     public int run(int desiredPort) {
