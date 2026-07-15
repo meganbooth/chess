@@ -4,6 +4,7 @@ import model.GameData;
 import java.util.Collection;
 
 public interface GameDAO {
+    int getNextGameID() throws DataAccessException;
     void clear() throws DataAccessException;
     void createGame(GameData game) throws DataAccessException;
     GameData getGame(int gameID) throws DataAccessException;

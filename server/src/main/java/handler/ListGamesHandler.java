@@ -16,12 +16,12 @@ public class ListGamesHandler {
 
     public void handle(Context ctx) throws DataAccessException {
         var serializer = new Gson();
-
         String authToken = ctx.header("authorization");
+
         ListGamesRequest listGamesRequest = new ListGamesRequest(authToken);
         ListGamesResult listGamesResult = listGamesService.listGames(listGamesRequest);
-        String json = serializer.toJson(listGamesResult);
 
+        String json = serializer.toJson(listGamesResult);
         ctx.result(json);
     }
 }

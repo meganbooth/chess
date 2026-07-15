@@ -9,6 +9,11 @@ import java.util.Map;
 
 public class MemoryGameDAO implements GameDAO{
     private final Map<Integer, GameData> games = new HashMap<>();
+    private int nextID = 1;
+
+    public int getNextGameID() {
+        return nextID++;
+    }
 
     @Override
     public void clear() throws DataAccessException {
