@@ -5,12 +5,8 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
-import model.UserData;
 import service.request.CreateGameRequest;
 import service.result.CreateGameResult;
-import service.result.RegisterResult;
-
-import java.util.UUID;
 
 public class CreateGameService {
     private final AuthDAO authDAO;

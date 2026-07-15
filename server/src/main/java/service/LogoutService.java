@@ -21,7 +21,6 @@ public class LogoutService {
         } else {
             authDAO.deleteAuth(authToken);
         }
-
         return new LogoutResult();
     }
 }

@@ -44,6 +44,10 @@ public class Server {
         var createGameService = new CreateGameService(memoryAuthDAO, memoryGameDAO);
         var createGameHandler = new CreateGameHandler(createGameService);
         javalin.post("/game", ctx -> createGameHandler.handle(ctx));
+
+        var joinGameService = new JoinGameService(memoryAuthDAO, memoryGameDAO);
+        var joinGameHandler = new JoinGameHandler(joinGameService);
+        javalin.put("/game", ctx -> joinGameHandler.handle(ctx));
     }
 
     public int run(int desiredPort) {

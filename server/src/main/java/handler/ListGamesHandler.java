@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import service.request.ListGamesRequest;
-import service.request.LoginRequest;
 import service.result.ListGamesResult;
 
 public class ListGamesHandler {
