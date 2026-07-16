@@ -33,7 +33,12 @@ public class JoinGameService {
 
         String authUsername = auth.username();
         GameData updatedGame;
-
+        if (joinGameRequest.playerColor() == null) {
+            throw new DataAccessException("Error: bad request");
+        }
+        if (!joinGameRequest.playerColor().equals("WHITE") && !joinGameRequest.playerColor().equals("BLACK")) {
+            throw new DataAccessException("Error: bad request");
+        }
         if (joinGameRequest.playerColor().equals("WHITE")) {
             if (game.whiteUsername() != null) {
                 throw new DataAccessException("Error: already taken");

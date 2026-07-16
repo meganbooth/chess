@@ -1,5 +1,7 @@
 package server;
 
+import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
@@ -48,6 +50,21 @@ public class Server {
         var joinGameService = new JoinGameService(memoryAuthDAO, memoryGameDAO);
         var joinGameHandler = new JoinGameHandler(joinGameService);
         javalin.put("/game", ctx -> joinGameHandler.handle(ctx));
+
+        javalin.exception(DataAccessException.class, (exception, ctx) -> {
+            String message = exception.getMessage();
+            if (message.equals("Error: unauthorized")) {
+                ctx.status(401);
+            } else if (message.equals("Error: bad request")) {
+                ctx.status(400);
+            } else if (message.equals("Error: already taken")) {
+                ctx.status(403);
+            } else {
+                ctx.status(500);
+            }
+            var serializer = new Gson();
+            ctx.result(serializer.toJson(java.util.Map.of("message", message)));
+        });
     }
 
     public int run(int desiredPort) {
