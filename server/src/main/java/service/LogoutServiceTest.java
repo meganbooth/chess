@@ -2,9 +2,7 @@ package service;
 
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryUserDAO;
 import model.AuthData;
-import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.request.LogoutRequest;
@@ -32,6 +30,7 @@ public class LogoutServiceTest {
 
     @Test
     public void logoutFail() {
-        assertThrows(DataAccessException.class, () -> logoutService.logout(new LogoutRequest("wrongAuthToken")));
+        assertThrows(DataAccessException.class, () -> logoutService.logout(
+                new LogoutRequest("wrongAuthToken")));
     }
 }

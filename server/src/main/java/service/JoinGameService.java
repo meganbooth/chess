@@ -38,12 +38,14 @@ public class JoinGameService {
             if (game.whiteUsername() != null) {
                 throw new DataAccessException("Error: already taken");
             }
-            updatedGame = new GameData(game.gameID(), authUsername, game.blackUsername(), game.gameName(), game.game());
+            updatedGame = new GameData(game.gameID(), authUsername, game.blackUsername(),
+                    game.gameName(), game.game());
         } else {
             if (game.blackUsername() != null) {
                 throw new DataAccessException("Error: already taken");
             }
-            updatedGame = new GameData(game.gameID(), game.whiteUsername(), authUsername, game.gameName(), game.game());
+            updatedGame = new GameData(game.gameID(), game.whiteUsername(), authUsername,
+                    game.gameName(), game.game());
         }
 
         gameDAO.updateGame(updatedGame);

@@ -24,12 +24,14 @@ public class RegisterServiceTest {
 
     @Test
     public void registerSuccess(){
-        assertDoesNotThrow(() -> registerService.register(new RegisterRequest("username", "password", "email")));
+        assertDoesNotThrow(() -> registerService.register(new RegisterRequest(
+                "username", "password", "email")));
     }
 
     @Test
     public void registerFail() throws DataAccessException {
         registerService.register(new RegisterRequest("username", "password", "email"));
-        assertThrows(DataAccessException.class, () -> registerService.register(new RegisterRequest("username", "password", "email")));
+        assertThrows(DataAccessException.class, () -> registerService.register(new RegisterRequest(
+                "username", "password", "email")));
     }
 }

@@ -32,6 +32,7 @@ public class LoginServiceTest {
 
     @Test
     public void loginFail() throws DataAccessException {
-        assertThrows(DataAccessException.class, () -> loginService.login(new LoginRequest("username", "wrongPassword")));
+        assertThrows(DataAccessException.class, () -> loginService.login(new LoginRequest(
+                "username", "wrongPassword")));
     }
 }

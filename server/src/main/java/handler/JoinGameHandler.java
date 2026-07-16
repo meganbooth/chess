@@ -2,7 +2,6 @@ package handler;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
 import io.javalin.http.Context;
 import service.request.JoinGameRequest;
 

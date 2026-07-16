@@ -21,7 +21,8 @@ public class RegisterService {
 
     public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
         if(userDAO.getUser(registerRequest.username()) == null){
-            UserData user = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
+            UserData user = new UserData(registerRequest.username(),
+                    registerRequest.password(), registerRequest.email());
             userDAO.createUser(user);
         } else {
             throw new DataAccessException("Error: already taken");
