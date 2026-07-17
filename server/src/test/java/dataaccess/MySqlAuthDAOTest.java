@@ -54,4 +54,20 @@ public class MySqlAuthDAOTest {
         var result = authDAO.getAuth("authToken");
         assertNull(result);
     }
+
+    @Test
+    public void deleteAuthSuccess() throws DataAccessException {
+        userDAO.createUser(new UserData("username","password","email"));
+        authDAO.createAuth(new AuthData("authToken","username"));
+        assertDoesNotThrow(() -> authDAO.deleteAuth("authToken"));
+        assertNull(authDAO.getAuth("authToken"));
+    }
+
+    @Test
+    public void deleteAuthFail() throws DataAccessException {
+        userDAO.createUser(new UserData("username","password","email"));
+        authDAO.createAuth(new AuthData("authToken","username"));
+        authDAO.deleteAuth("wrongAuthToken");
+        assertNotNull(authDAO.getAuth("authToken"));
+    }
 }
