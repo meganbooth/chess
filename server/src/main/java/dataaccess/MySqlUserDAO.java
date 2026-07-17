@@ -36,6 +36,22 @@ public class MySqlUserDAO implements UserDAO {
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
+        var statement = "SELECT username, password, email FROM Users WHERE username = ?";
+        try (var conn = getConnection();
+             var preparedStatement = conn.prepareStatement(statement)) {
+            preparedStatement.setString(1, username);
+            var rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                var resultUsername = rs.getString("username");
+                var resultPassword = rs.getString("password");
+                var resultEmail = rs.getString("email");
+
+                UserData user = new UserData(resultUsername,resultPassword,resultEmail);
+                return user;
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to get user", ex);
+        }
         return null;
     }
 }
