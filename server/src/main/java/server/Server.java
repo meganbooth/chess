@@ -1,10 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import handler.*;
 import io.javalin.*;
 import service.*;
@@ -16,7 +13,10 @@ public class Server {
     private final MemoryAuthDAO memoryAuthDAO;
     private final MemoryGameDAO memoryGameDAO;
 
-    public Server() {
+    public Server() throws  DataAccessException {
+        DatabaseManager.createDatabase();
+        DatabaseManager.configureDatabase();
+
         memoryUserDAO = new MemoryUserDAO();
         memoryAuthDAO = new MemoryAuthDAO();
         memoryGameDAO = new MemoryGameDAO();

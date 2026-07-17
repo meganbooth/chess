@@ -29,6 +29,54 @@ public class DatabaseManager {
         }
     }
 
+    private static final String CREATE_USERS_TABLE =
+            """
+            CREATE TABLE IF NOT EXISTS Users (
+                username VARCHAR(255) NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                PRIMARY KEY (username)
+            )
+            """;
+
+    private static final String CREATE_AUTH_TABLE =
+            """
+            CREATE TABLE IF NOT EXISTS Auth (
+                authToken VARCHAR(255) NOT NULL,
+                username VARCHAR(255) NOT NULL,
+                PRIMARY KEY (authToken),
+                FOREIGN KEY (username) REFERENCES Users(username)
+            )
+            """;
+
+    private static final String CREATE_GAMES_TABLE =
+            """
+            CREATE TABLE IF NOT EXISTS Games (
+                gameID INT NOT NULL,
+                blackUsername VARCHAR(255),
+                whiteUsername VARCHAR(255),
+                gameName VARCHAR(255) NOT NULL,
+                gameState TEXT NOT NULL,
+                PRIMARY KEY (gameID),
+                FOREIGN KEY (blackUsername) REFERENCES Users(username),
+                FOREIGN KEY (whiteUsername) REFERENCES Users(username)
+            )
+            """;
+
+    static public void configureDatabase() throws DataAccessException {
+        String[] createStatements = {CREATE_USERS_TABLE, CREATE_AUTH_TABLE, CREATE_GAMES_TABLE};
+        try (var conn = getConnection()){
+            for(String statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)){
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException ex){
+            throw new DataAccessException("failed to configure database",ex);
+        }
+    }
+
+
     /**
      * Create a connection to the database and sets the catalog based upon the
      * properties specified in db.properties. Connections to the database should
