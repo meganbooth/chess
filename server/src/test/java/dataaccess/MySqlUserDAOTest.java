@@ -16,6 +16,12 @@ public class MySqlUserDAOTest {
     }
 
     @Test
+    public void clearSuccess() throws DataAccessException {
+        userDAO.createUser(new UserData("username", "password", "email"));
+        assertDoesNotThrow(() -> userDAO.clear());
+    }
+
+    @Test
     public void createUserSuccess() {
         assertDoesNotThrow(() -> userDAO.createUser(new UserData("username",
                 "password","email")));
