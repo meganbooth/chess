@@ -5,8 +5,8 @@ import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MySqlAuthDAOTest {
     private MySqlUserDAO userDAO;
@@ -39,5 +39,19 @@ public class MySqlAuthDAOTest {
         assertDoesNotThrow(() -> authDAO.createAuth(new AuthData("authToken","username")));
         assertThrows(DataAccessException.class, () -> authDAO.createAuth(new AuthData(
                 "authToken","username")));
+    }
+
+    @Test
+    public void getAuthSuccess() throws DataAccessException{
+        userDAO.createUser(new UserData("username","password", "email"));
+        authDAO.createAuth(new AuthData("authToken","username"));
+        var result = authDAO.getAuth("authToken");
+        assertNotNull(result);
+    }
+
+    @Test
+    public void getAuthFail() throws DataAccessException{
+        var result = authDAO.getAuth("authToken");
+        assertNull(result);
     }
 }
