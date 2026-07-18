@@ -7,8 +7,8 @@ import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MySqlGameDAOTest {
     private MySqlUserDAO userDAO;
@@ -42,5 +42,17 @@ public class MySqlGameDAOTest {
                 null,"gameName", new ChessGame())));
         assertThrows(DataAccessException.class, () -> gameDAO.createGame(new GameData(1234,null,
                 null,"gameName", new ChessGame())));
+    }
+
+    @Test
+    public void getGameSuccess() throws DataAccessException{
+        gameDAO.createGame(new GameData(1234,null,
+                null,"gameName", new ChessGame()));
+        assertNotNull(gameDAO.getGame(1234));
+    }
+
+    @Test
+    public void getGameFail() throws DataAccessException{
+        assertNull(gameDAO.getGame(1234));
     }
 }
