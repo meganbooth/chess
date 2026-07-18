@@ -9,45 +9,45 @@ import service.*;
 public class Server {
 
     private final Javalin javalin;
-    private final MemoryUserDAO memoryUserDAO;
-    private final MemoryAuthDAO memoryAuthDAO;
-    private final MemoryGameDAO memoryGameDAO;
+    private final MySqlUserDAO mySqlUserDAO;
+    private final MySqlAuthDAO mySqlAuthDAO;
+    private final MySqlGameDAO mySqlGameDAO;
 
     public Server() throws  DataAccessException {
         DatabaseManager.createDatabase();
         DatabaseManager.configureDatabase();
 
-        memoryUserDAO = new MemoryUserDAO();
-        memoryAuthDAO = new MemoryAuthDAO();
-        memoryGameDAO = new MemoryGameDAO();
+        mySqlUserDAO = new MySqlUserDAO();
+        mySqlAuthDAO = new MySqlAuthDAO();
+        mySqlGameDAO = new MySqlGameDAO();
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
-        var clearService = new ClearService(memoryUserDAO, memoryAuthDAO, memoryGameDAO);
+        var clearService = new ClearService(mySqlUserDAO, mySqlAuthDAO, mySqlGameDAO);
         var clearHandler = new ClearHandler(clearService);
         javalin.delete("/db", ctx -> clearHandler.handle(ctx));
 
-        var registerService = new RegisterService(memoryUserDAO, memoryAuthDAO);
+        var registerService = new RegisterService(mySqlUserDAO, mySqlAuthDAO);
         var registerHandler = new RegisterHandler(registerService);
         javalin.post("/user", ctx -> registerHandler.handle(ctx));
 
-        var loginService = new LoginService(memoryUserDAO, memoryAuthDAO);
+        var loginService = new LoginService(mySqlUserDAO, mySqlAuthDAO);
         var loginHandler = new LoginHandler(loginService);
         javalin.post("/session", ctx -> loginHandler.handle(ctx));
 
-        var logoutService = new LogoutService(memoryAuthDAO);
+        var logoutService = new LogoutService(mySqlAuthDAO);
         var logoutHandler = new LogoutHandler(logoutService);
         javalin.delete("/session", ctx -> logoutHandler.handle(ctx));
 
-        var listGamesService = new ListGamesService(memoryAuthDAO, memoryGameDAO);
+        var listGamesService = new ListGamesService(mySqlAuthDAO, mySqlGameDAO);
         var listGamesHandler = new ListGamesHandler(listGamesService);
         javalin.get("/game", ctx -> listGamesHandler.handle(ctx));
 
-        var createGameService = new CreateGameService(memoryAuthDAO, memoryGameDAO);
+        var createGameService = new CreateGameService(mySqlAuthDAO, mySqlGameDAO);
         var createGameHandler = new CreateGameHandler(createGameService);
         javalin.post("/game", ctx -> createGameHandler.handle(ctx));
 
-        var joinGameService = new JoinGameService(memoryAuthDAO, memoryGameDAO);
+        var joinGameService = new JoinGameService(mySqlAuthDAO, mySqlGameDAO);
         var joinGameHandler = new JoinGameHandler(joinGameService);
         javalin.put("/game", ctx -> joinGameHandler.handle(ctx));
 

@@ -13,7 +13,18 @@ import static dataaccess.DatabaseManager.getConnection;
 public class MySqlGameDAO implements GameDAO{
     @Override
     public int getNextGameID() throws DataAccessException {
-        return 0;
+        var statement = "SELECT MAX(gameID) AS maxID FROM Games";
+        try (var conn = getConnection();
+             var preparedStatement = conn.prepareStatement(statement)) {
+            var rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                int maxID = rs.getInt("maxID");
+                return maxID + 1;
+            }
+            return 1;
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to get next game ID", ex);
+        }
     }
 
     @Override
