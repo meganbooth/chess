@@ -26,7 +26,8 @@ public class MySqlGameDAOTest {
     }
 
     @Test
-    public void clearSuccess() {
+    public void clearSuccess() throws DataAccessException {
+        gameDAO.createGame(new GameData(1234, null, null, "gameName", new ChessGame()));
         assertDoesNotThrow(() -> gameDAO.clear());
     }
 
@@ -72,5 +73,20 @@ public class MySqlGameDAOTest {
     public void listGamesFail() throws DataAccessException {
         var result = gameDAO.listGames();
         assertEquals(0, result.size());
+    }
+
+    @Test
+    public void updateGameSuccess() throws DataAccessException {
+        userDAO.createUser(new UserData("whiteUsername", "password", "email"));
+        gameDAO.createGame(new GameData(1234, null, null, "gameName", new ChessGame()));
+        gameDAO.updateGame(new GameData(1234, "whiteUsername", null, "gameName", new ChessGame()));
+        var result = gameDAO.getGame(1234);
+        assertEquals("whiteUsername", result.whiteUsername());
+    }
+
+    @Test
+    public void updateGameFail() throws DataAccessException {
+        assertDoesNotThrow(() -> gameDAO.updateGame(new GameData(1234, null, null, "gameName", new ChessGame())));
+        assertNull(gameDAO.getGame(1234));
     }
 }

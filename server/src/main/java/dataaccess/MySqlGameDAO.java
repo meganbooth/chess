@@ -2,13 +2,11 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import model.AuthData;
 import model.GameData;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static dataaccess.DatabaseManager.getConnection;
 
@@ -94,6 +92,18 @@ public class MySqlGameDAO implements GameDAO{
 
     @Override
     public void updateGame(GameData game) throws DataAccessException {
-        throw new DataAccessException("not implemented");
+        var statement = "UPDATE Games SET whiteUsername = ?, blackUsername = ?, " +
+                "gameName = ?, gameState = ? WHERE gameID = ?";
+        try (var conn = getConnection();
+             var preparedStatement = conn.prepareStatement(statement)) {
+            preparedStatement.setString(1, game.whiteUsername());
+            preparedStatement.setString(2, game.blackUsername());
+            preparedStatement.setString(3, game.gameName());
+            preparedStatement.setString(4, new Gson().toJson(game.game()));
+            preparedStatement.setInt(5, game.gameID());
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to update game", ex);
+        }
     }
 }
