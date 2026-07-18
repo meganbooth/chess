@@ -11,12 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LogoutServiceTest {
-    private MemoryAuthDAO authDAO;
     private LogoutService logoutService;
 
     @BeforeEach
     public void setup() throws DataAccessException {
-        authDAO = new MemoryAuthDAO();
+        MemoryAuthDAO authDAO = new MemoryAuthDAO();
         logoutService = new LogoutService(authDAO);
 
         AuthData auth = new AuthData("authToken", "username");

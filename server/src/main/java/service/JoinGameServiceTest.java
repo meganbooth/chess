@@ -14,15 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JoinGameServiceTest {
-    private MemoryAuthDAO authDAO;
-    private MemoryGameDAO gameDAO;
     private JoinGameService joinGameService;
 
     @BeforeEach
     public void setup() throws DataAccessException {
-        authDAO = new MemoryAuthDAO();
-        gameDAO = new MemoryGameDAO();
-        joinGameService = new JoinGameService(authDAO,gameDAO);
+        MemoryAuthDAO authDAO = new MemoryAuthDAO();
+        MemoryGameDAO gameDAO = new MemoryGameDAO();
+        joinGameService = new JoinGameService(authDAO, gameDAO);
 
         AuthData auth = new AuthData("authToken", "username");
         authDAO.createAuth(auth);

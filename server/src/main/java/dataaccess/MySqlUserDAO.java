@@ -46,8 +46,7 @@ public class MySqlUserDAO implements UserDAO {
                 var resultPassword = rs.getString("password");
                 var resultEmail = rs.getString("email");
 
-                UserData user = new UserData(resultUsername,resultPassword,resultEmail);
-                return user;
+                return new UserData(resultUsername,resultPassword,resultEmail);
             }
         } catch (SQLException ex) {
             throw new DataAccessException("failed to get user", ex);

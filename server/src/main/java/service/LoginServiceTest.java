@@ -12,14 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LoginServiceTest {
-    private MemoryUserDAO userDAO;
-    private MemoryAuthDAO authDAO;
     private LoginService loginService;
 
     @BeforeEach
     public void setup() throws DataAccessException{
-        userDAO = new MemoryUserDAO();
-        authDAO = new MemoryAuthDAO();
+        MemoryUserDAO userDAO = new MemoryUserDAO();
+        MemoryAuthDAO authDAO = new MemoryAuthDAO();
         loginService = new LoginService(userDAO, authDAO);
 
         userDAO.createUser(new UserData("username","password","email"));
@@ -31,7 +29,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void loginFail() throws DataAccessException {
+    public void loginFail(){
         assertThrows(DataAccessException.class, () -> loginService.login(new LoginRequest(
                 "username", "wrongPassword")));
     }

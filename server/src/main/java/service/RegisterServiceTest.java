@@ -11,14 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RegisterServiceTest {
-    private MemoryUserDAO userDAO;
-    private MemoryAuthDAO authDAO;
     private RegisterService registerService;
 
     @BeforeEach
     public void setup() {
-        userDAO = new MemoryUserDAO();
-        authDAO = new MemoryAuthDAO();
+        MemoryUserDAO userDAO = new MemoryUserDAO();
+        MemoryAuthDAO authDAO = new MemoryAuthDAO();
         registerService = new RegisterService(userDAO, authDAO);
     }
 
