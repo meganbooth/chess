@@ -1,6 +1,7 @@
 package client;
 
 import dataaccess.*;
+import model.AuthData;
 import model.result.LoginResult;
 import model.result.RegisterResult;
 import org.junit.jupiter.api.*;
@@ -63,5 +64,16 @@ public class ServerFacadeTests {
         facade.register("username","password","email");
         assertThrows(Exception.class, () -> facade.login("username","wrongPassword"));
         assertThrows(Exception.class, () -> facade.login("wrongUsername","password"));
+    }
+
+    @Test
+    public void logoutSuccess() throws Exception{
+        RegisterResult result = facade.register("username","password","email");
+        assertDoesNotThrow(() -> facade.logout(result.authToken()));
+    }
+
+    @Test
+    public void logoutFail() {
+        assertThrows(Exception.class, () -> facade.logout("wrongAuthToken"));
     }
 }

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import model.request.LoginRequest;
 import model.request.RegisterRequest;
 import model.result.LoginResult;
+import model.result.LogoutResult;
 import model.result.RegisterResult;
 
 import java.io.InputStream;
@@ -12,7 +13,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.util.zip.DataFormatException;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -21,11 +21,16 @@ public class ServerFacade {
         serverUrl = "http://localhost:" + port;
     }
 
-    private <T> T makeRequest(String httpMethod, String endpoint, Object requestBody, Class<T> resultClass) throws Exception {
+    private <T> T makeRequest(String httpMethod, String endpoint, Object requestBody,
+                              Class<T> resultClass, String authToken) throws Exception {
         URL url = new URI(serverUrl + endpoint).toURL();
         HttpURLConnection http = (HttpURLConnection) url.openConnection();
         http.setRequestMethod(httpMethod);
         http.setDoOutput(true);
+
+        if (authToken != null) {
+            http.addRequestProperty("Authorization", authToken);
+        }
 
         if (requestBody != null) {
             http.addRequestProperty("Content-Type", "application/json");
@@ -48,11 +53,15 @@ public class ServerFacade {
 
     public RegisterResult register(String username, String password, String email) throws Exception {
         RegisterRequest request = new RegisterRequest(username,password,email);
-        return makeRequest("POST", "/user", request, RegisterResult.class);
+        return makeRequest("POST", "/user", request, RegisterResult.class, null);
     }
 
     public LoginResult login(String username, String password) throws Exception{
         LoginRequest request = new LoginRequest(username,password);
-        return makeRequest("POST", "/session", request, LoginResult.class);
+        return makeRequest("POST", "/session", request, LoginResult.class, null );
+    }
+
+    public LogoutResult logout(String authToken) throws Exception{
+        return makeRequest("DELETE", "/session", null, null, authToken);
     }
 }
