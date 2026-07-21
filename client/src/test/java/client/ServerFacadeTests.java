@@ -1,6 +1,7 @@
 package client;
 
 import dataaccess.*;
+import model.result.LoginResult;
 import model.result.RegisterResult;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -32,7 +33,7 @@ public class ServerFacadeTests {
     public void clear() throws Exception {
         clearService.clear();
     }
-    
+
     @AfterAll
     static void stopServer() {
         server.stop();
@@ -49,5 +50,18 @@ public class ServerFacadeTests {
     public void registerFail() throws Exception {
         facade.register("username","password","email");
         assertThrows(Exception.class, () -> facade.register("username","password","email"));
+    }
+
+    @Test
+    public void loginSuccess() throws Exception{
+        facade.register("username","password","email");
+        assertDoesNotThrow(() -> facade.login("username","password"));
+    }
+
+    @Test
+    public void loginFail() throws Exception {
+        facade.register("username","password","email");
+        assertThrows(Exception.class, () -> facade.login("username","wrongPassword"));
+        assertThrows(Exception.class, () -> facade.login("wrongUsername","password"));
     }
 }
