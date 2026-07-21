@@ -5,8 +5,8 @@ import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import service.request.LoginRequest;
-import service.result.LoginResult;
+import model.request.LoginRequest;
+import model.result.LoginResult;
 
 import java.util.UUID;
 

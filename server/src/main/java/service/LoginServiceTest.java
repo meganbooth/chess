@@ -6,7 +6,7 @@ import dataaccess.MemoryUserDAO;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.request.LoginRequest;
+import model.request.LoginRequest;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;

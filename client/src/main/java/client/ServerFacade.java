@@ -1,6 +1,8 @@
 package client;
 
 import com.google.gson.Gson;
+import model.request.RegisterRequest;
+import model.result.RegisterResult;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -8,6 +10,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.zip.DataFormatException;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -39,5 +42,10 @@ public class ServerFacade {
             }
             return null;
         }
+    }
+
+    public RegisterResult register(String username, String password, String email) throws Exception {
+        RegisterRequest request = new RegisterRequest(username,password,email);
+        return makeRequest("POST", "/user", request, RegisterResult.class);
     }
 }

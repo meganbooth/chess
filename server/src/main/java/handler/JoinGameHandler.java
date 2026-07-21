@@ -3,7 +3,7 @@ package handler;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
-import service.request.JoinGameRequest;
+import model.request.JoinGameRequest;
 
 public class JoinGameHandler {
     private final service.JoinGameService joinGameService;

@@ -4,8 +4,8 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
-import service.request.JoinGameRequest;
-import service.result.JoinGameResult;
+import model.request.JoinGameRequest;
+import model.result.JoinGameResult;
 
 public class JoinGameService {
     private final AuthDAO authDAO;

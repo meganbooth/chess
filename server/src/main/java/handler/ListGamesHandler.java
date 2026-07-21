@@ -3,8 +3,8 @@ package handler;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
-import service.request.ListGamesRequest;
-import service.result.ListGamesResult;
+import model.request.ListGamesRequest;
+import model.result.ListGamesResult;
 
 public class ListGamesHandler {
     private final service.ListGamesService listGamesService;

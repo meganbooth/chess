@@ -2,8 +2,8 @@ package service;
 
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
-import service.request.LogoutRequest;
-import service.result.LogoutResult;
+import model.request.LogoutRequest;
+import model.result.LogoutResult;
 
 public class LogoutService {
     private final AuthDAO authDAO;

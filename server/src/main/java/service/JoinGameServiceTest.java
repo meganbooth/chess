@@ -8,7 +8,7 @@ import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.request.JoinGameRequest;
+import model.request.JoinGameRequest;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;

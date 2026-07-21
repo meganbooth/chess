@@ -2,7 +2,7 @@ package handler;
 
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
-import service.request.LogoutRequest;
+import model.request.LogoutRequest;
 
 public class LogoutHandler {
     private final service.LogoutService logoutService;
