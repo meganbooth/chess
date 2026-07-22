@@ -2,12 +2,10 @@ package client;
 
 import com.google.gson.Gson;
 import model.request.CreateGameRequest;
+import model.request.JoinGameRequest;
 import model.request.LoginRequest;
 import model.request.RegisterRequest;
-import model.result.CreateGameResult;
-import model.result.LoginResult;
-import model.result.LogoutResult;
-import model.result.RegisterResult;
+import model.result.*;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -70,5 +68,10 @@ public class ServerFacade {
     public CreateGameResult createGame(String gameName, String authToken) throws Exception {
         CreateGameRequest request = new CreateGameRequest(gameName, authToken);
         return makeRequest("POST", "/game", request, CreateGameResult.class, authToken);
+    }
+
+    public JoinGameResult joinGame(String playerColor, int gameID, String authToken) throws Exception {
+        JoinGameRequest request = new JoinGameRequest(playerColor,gameID,authToken);
+        return makeRequest("PUT", "/game", request, JoinGameResult.class, authToken);
     }
 }

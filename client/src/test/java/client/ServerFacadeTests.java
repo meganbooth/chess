@@ -1,9 +1,7 @@
 package client;
 
 import dataaccess.*;
-import model.AuthData;
 import model.result.CreateGameResult;
-import model.result.LoginResult;
 import model.result.RegisterResult;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -87,5 +85,29 @@ public class ServerFacadeTests {
     @Test
     public void createGameFail() {
         assertThrows(Exception.class, () -> facade.createGame("gameName","wrongAuthToken"));
+    }
+
+    @Test
+    public void joinGameSuccess() throws Exception {
+        RegisterResult registerResult = facade.register("username","password","email");
+        CreateGameResult createGameResult = facade.createGame("gameName",registerResult.authToken());
+        assertDoesNotThrow(() -> facade.joinGame("BLACK",createGameResult.gameID(), registerResult.authToken()));
+    }
+
+    @Test
+    public void joinGameFail() throws Exception {
+        RegisterResult user1 = facade.register("username","password","email");
+        RegisterResult user2 = facade.register("username2","password2","email2");
+        CreateGameResult createGameResult = facade.createGame("gameName",user1.authToken());
+
+        // Unauthorized
+        assertThrows(Exception.class, () -> facade.joinGame("BLACK",createGameResult.gameID(), "wrongAuthToken"));
+
+        // Game does not exist
+        assertThrows(Exception.class, () -> facade.joinGame("BLACK",1234, user1.authToken()));
+
+        // Color already taken
+        facade.joinGame("BLACK",createGameResult.gameID(), user1.authToken());
+        assertThrows(Exception.class, () -> facade.joinGame("BLACK",createGameResult.gameID(), user2.authToken()));
     }
 }
