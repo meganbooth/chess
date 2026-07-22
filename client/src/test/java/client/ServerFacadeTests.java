@@ -2,6 +2,7 @@ package client;
 
 import dataaccess.*;
 import model.AuthData;
+import model.result.CreateGameResult;
 import model.result.LoginResult;
 import model.result.RegisterResult;
 import org.junit.jupiter.api.*;
@@ -75,5 +76,16 @@ public class ServerFacadeTests {
     @Test
     public void logoutFail() {
         assertThrows(Exception.class, () -> facade.logout("wrongAuthToken"));
+    }
+
+    @Test
+    public void createGameSuccess() throws Exception {
+        RegisterResult result = facade.register("username","password","email");
+        assertDoesNotThrow(() -> facade.createGame("gameName", result.authToken()));
+    }
+
+    @Test
+    public void createGameFail() {
+        assertThrows(Exception.class, () -> facade.createGame("gameName","wrongAuthToken"));
     }
 }

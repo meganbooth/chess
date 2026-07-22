@@ -1,8 +1,10 @@
 package client;
 
 import com.google.gson.Gson;
+import model.request.CreateGameRequest;
 import model.request.LoginRequest;
 import model.request.RegisterRequest;
+import model.result.CreateGameResult;
 import model.result.LoginResult;
 import model.result.LogoutResult;
 import model.result.RegisterResult;
@@ -56,12 +58,17 @@ public class ServerFacade {
         return makeRequest("POST", "/user", request, RegisterResult.class, null);
     }
 
-    public LoginResult login(String username, String password) throws Exception{
+    public LoginResult login(String username, String password) throws Exception {
         LoginRequest request = new LoginRequest(username,password);
         return makeRequest("POST", "/session", request, LoginResult.class, null );
     }
 
-    public LogoutResult logout(String authToken) throws Exception{
+    public LogoutResult logout(String authToken) throws Exception {
         return makeRequest("DELETE", "/session", null, null, authToken);
+    }
+
+    public CreateGameResult createGame(String gameName, String authToken) throws Exception {
+        CreateGameRequest request = new CreateGameRequest(gameName, authToken);
+        return makeRequest("POST", "/game", request, CreateGameResult.class, authToken);
     }
 }
