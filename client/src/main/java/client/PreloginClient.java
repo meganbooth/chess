@@ -2,6 +2,19 @@ package client;
 
 public class PreloginClient implements Client{
     public String handleInput(String input) {
-        return "prelogin received: " + input;
+        return switch (input) {
+            case "help" ->
+                    """
+                    Available commands:
+                      register - create a new account
+                      login - sign in to an existing account
+                      quit - exit the program
+                      help - show this menu
+                    """;
+            case "quit" -> "Thanks for playing!";
+            case "register" -> "register";
+            case "login" -> "login";
+            default -> "other";
+        };
     }
 }
