@@ -1,10 +1,7 @@
 package client;
 
 import com.google.gson.Gson;
-import model.request.CreateGameRequest;
-import model.request.JoinGameRequest;
-import model.request.LoginRequest;
-import model.request.RegisterRequest;
+import model.request.*;
 import model.result.*;
 
 import java.io.InputStream;
@@ -68,6 +65,10 @@ public class ServerFacade {
     public CreateGameResult createGame(String gameName, String authToken) throws Exception {
         CreateGameRequest request = new CreateGameRequest(gameName, authToken);
         return makeRequest("POST", "/game", request, CreateGameResult.class, authToken);
+    }
+
+    public ListGamesResult listGames(String authToken) throws Exception {
+        return makeRequest("GET", "/game", null, ListGamesResult.class, authToken);
     }
 
     public JoinGameResult joinGame(String playerColor, int gameID, String authToken) throws Exception {

@@ -88,6 +88,18 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void listGamesSuccess() throws Exception {
+        RegisterResult result = facade.register("username","password","email");
+        facade.createGame("gameName", result.authToken());
+        assertDoesNotThrow(() -> facade.listGames(result.authToken()));
+    }
+
+    @Test
+    public void listGamesFail() {
+        assertThrows(Exception.class, () -> facade.listGames("wrongAuthToken"));
+    }
+
+    @Test
     public void joinGameSuccess() throws Exception {
         RegisterResult registerResult = facade.register("username","password","email");
         CreateGameResult createGameResult = facade.createGame("gameName",registerResult.authToken());
