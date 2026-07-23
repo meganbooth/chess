@@ -1,5 +1,8 @@
 package client;
 
+import model.result.LoginResult;
+import model.result.RegisterResult;
+
 import java.util.Scanner;
 
 public class PostloginClient implements Client {
@@ -16,7 +19,40 @@ public class PostloginClient implements Client {
     }
 
     public String handleInput(String input) {
-        return "postlogin received: " + input;
+        return switch (input) {
+            case "help" -> """
+                    Available commands:
+                      list - list all existing games
+                      create - create a new game
+                      join - join an existing game
+                      observe - watch a game
+                      logout - exit to login menu
+                      help - show this menu
+                    """;
+            case "logout" -> {
+                try {
+                    facade.logout(authToken);
+                } catch (Exception e) {
+                    // ignore, proceed regardless
+                }
+                switchBackward = true;
+                yield "See you later!";
+            }
+            case "observe" -> "observe";
+            case "join" -> "join";
+            case "create" -> "create";
+            case "list" -> "list";
+            default -> """
+                    Command not recognized.
+                    Available commands:
+                      list - list all existing games
+                      create - create a new game
+                      join - join an existing game
+                      observe - watch a game
+                      logout - exit to login menu
+                      help - show this menu
+                    """;
+        };
     }
 
     public boolean shouldSwitchForward() {
