@@ -8,9 +8,9 @@ import java.util.Scanner;
 public class PreloginClient implements Client{
     public ServerFacade facade = new ServerFacade(8080);
 
+    private boolean switchForward = false;
+    private boolean switchBackward = false;
     private String authToken = null;
-    private boolean quit = false;
-    private boolean switchClient = false;
 
     Scanner scanner = new Scanner(System.in);
 
@@ -25,7 +25,7 @@ public class PreloginClient implements Client{
                       help - show this menu
                     """;
             case "quit" -> {
-                quit = true;
+                switchBackward = true;
                 yield "Thanks for playing!";
             }
             case "register" -> {
@@ -38,7 +38,7 @@ public class PreloginClient implements Client{
                 try {
                     RegisterResult result = facade.register(username,password,email);
                     authToken = result.authToken();
-                    switchClient = true;
+                    switchForward = true;
                     yield "Account successfully created";
                 } catch(Exception e) {
                     yield "Error: Account not created. That username may already be taken.";
@@ -52,7 +52,7 @@ public class PreloginClient implements Client{
                 try {
                     LoginResult result = facade.login(username,password);
                     authToken = result.authToken();
-                    switchClient = true;
+                    switchForward = true;
                     yield "Welcome";
                 } catch(Exception e) {
                     yield "Error: Incorrect username or password.";
@@ -68,11 +68,11 @@ public class PreloginClient implements Client{
                     """;
         };
     }
-    public boolean shouldQuit() {
-        return quit;
+    public boolean shouldSwitchForward() {
+        return switchForward;
     }
-    public boolean shouldSwitchClient() {
-        return switchClient;
+    public boolean shouldSwitchBackward() {
+        return switchBackward;
     }
     public String getAuthToken() {
         return authToken;
