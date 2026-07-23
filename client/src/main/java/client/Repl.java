@@ -13,6 +13,7 @@ public class Repl {
             String input = scanner.nextLine();
             String output = preloginClient.handleInput(input);
             System.out.println(output);
+            if (preloginClient.shouldQuit()) break;
         }
     }
 }
