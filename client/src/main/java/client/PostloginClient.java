@@ -45,7 +45,21 @@ public class PostloginClient implements Client {
                 yield "See you later!";
             }
             case "observe" -> "observe";
-            case "join" -> "join";
+            case "join" -> {
+                try {
+                    ListGamesResult listResult = facade.listGames(authToken);
+                    games = new ArrayList<>(listResult.games());
+                    System.out.print("Game Number: ");
+                    int gameNumber = Integer.parseInt(scanner.nextLine());
+                    int gameID = games.get(gameNumber - 1).gameID();
+                    System.out.print("Color: ");
+                    String color = scanner.nextLine();
+                    facade.joinGame(color.toUpperCase(),gameID,authToken);
+                    yield "Welcome";
+                } catch(Exception e) {
+                    yield "Error: could not join game.";
+                }
+            }
             case "create" -> {
                 System.out.print("Game Name: ");
                 String gameName = scanner.nextLine();
