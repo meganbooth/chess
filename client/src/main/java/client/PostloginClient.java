@@ -44,7 +44,19 @@ public class PostloginClient implements Client {
                 switchBackward = true;
                 yield "See you later!";
             }
-            case "observe" -> "observe";
+            case "observe" -> {
+                try{
+                    ListGamesResult listResult = facade.listGames(authToken);
+                    games = new ArrayList<>(listResult.games());
+                    System.out.print("Game Number: ");
+                    int gameNumber = Integer.parseInt(scanner.nextLine());
+                    int gameID = games.get(gameNumber - 1).gameID();
+                    switchForward = true;
+                    yield "Observing game";
+                } catch (Exception e) {
+                    yield "Error: could not observe game.";
+                }
+            }
             case "join" -> {
                 try {
                     ListGamesResult listResult = facade.listGames(authToken);
