@@ -1,6 +1,7 @@
 package client;
 
 import model.GameData;
+import model.result.CreateGameResult;
 import model.result.ListGamesResult;
 import model.result.LoginResult;
 import model.result.RegisterResult;
@@ -45,7 +46,16 @@ public class PostloginClient implements Client {
             }
             case "observe" -> "observe";
             case "join" -> "join";
-            case "create" -> "create";
+            case "create" -> {
+                System.out.print("Game Name: ");
+                String gameName = scanner.nextLine();
+                try {
+                    facade.createGame(gameName,authToken);
+                    yield "Game created successfully";
+                } catch(Exception e) {
+                    yield "Error: Game not created.";
+                }
+            }
             case "list" -> {
                 try {
                     ListGamesResult result = facade.listGames(authToken);
