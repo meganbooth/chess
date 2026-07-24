@@ -1,8 +1,12 @@
 package client;
 
+import model.GameData;
+import model.result.ListGamesResult;
 import model.result.LoginResult;
 import model.result.RegisterResult;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class PostloginClient implements Client {
@@ -12,6 +16,7 @@ public class PostloginClient implements Client {
     private boolean switchBackward = false;
     private String authToken = null;
 
+    List<GameData> games;
     Scanner scanner = new Scanner(System.in);
 
     public PostloginClient(String authToken) {
@@ -41,7 +46,24 @@ public class PostloginClient implements Client {
             case "observe" -> "observe";
             case "join" -> "join";
             case "create" -> "create";
-            case "list" -> "list";
+            case "list" -> {
+                try {
+                    ListGamesResult result = facade.listGames(authToken);
+                    games = new ArrayList<>(result.games());
+                    String gameList = "";
+                    for (int i = 0; i < games.size(); i++) {
+                        gameList += (i + 1) + ". " + games.get(i).gameName()
+                                + ", white:"
+                                + (games.get(i).whiteUsername() != null ? games.get(i).whiteUsername() : "open")
+                                + ", black:"
+                                + (games.get(i).blackUsername() != null ? games.get(i).blackUsername() : "open")
+                                + "\n";
+                    }
+                    yield gameList;
+                } catch(Exception e) {
+                    yield "Error: unauthorized";
+                }
+            }
             default -> """
                     Command not recognized.
                     Available commands:
