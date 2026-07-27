@@ -31,10 +31,19 @@ public class PreloginClient implements Client{
             case "register" -> {
                 System.out.print("Username: ");
                 String username = scanner.nextLine();
+                if (username.isBlank()) {
+                    yield "Error: username cannot be empty.";
+                }
                 System.out.print("Password: ");
                 String password = scanner.nextLine();
+                if (password.isBlank()) {
+                    yield "Error: password cannot be empty.";
+                }
                 System.out.print("Email: ");
                 String email = scanner.nextLine();
+                if (email.isBlank()) {
+                    yield "Error: email cannot be empty.";
+                }
                 try {
                     RegisterResult result = facade.register(username,password,email);
                     authToken = result.authToken();

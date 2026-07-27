@@ -77,6 +77,9 @@ public class PostloginClient implements Client {
             case "create" -> {
                 System.out.print("Game Name: ");
                 String gameName = scanner.nextLine();
+                if (gameName.isBlank()) {
+                    yield "Error: game name cannot be empty.";
+                }
                 try {
                     facade.createGame(gameName,authToken);
                     yield "Game created successfully";
