@@ -15,6 +15,15 @@ public class PostloginClient implements Client {
     private boolean switchBackward = false;
     private String authToken = null;
     private String selectedColor;
+    private static final String HELP_TEXT = """
+        Available commands:
+          list - list all existing games
+          create - create a new game
+          join - join an existing game
+          observe - watch a game
+          logout - exit to login menu
+          help - show this menu
+        """;
 
     List<GameData> games;
     Scanner scanner = new Scanner(System.in);
@@ -25,15 +34,7 @@ public class PostloginClient implements Client {
 
     public String handleInput(String input) {
         return switch (input) {
-            case "help" -> """
-                    Available commands:
-                      list - list all existing games
-                      create - create a new game
-                      join - join an existing game
-                      observe - watch a game
-                      logout - exit to login menu
-                      help - show this menu
-                    """;
+            case "help" -> HELP_TEXT;
             case "logout" -> {
                 try {
                     facade.logout(authToken);
@@ -105,16 +106,7 @@ public class PostloginClient implements Client {
                     yield "Error: unauthorized";
                 }
             }
-            default -> """
-                    Command not recognized.
-                    Available commands:
-                      list - list all existing games
-                      create - create a new game
-                      join - join an existing game
-                      observe - watch a game
-                      logout - exit to login menu
-                      help - show this menu
-                    """;
+            default -> "Command not recognized.\n" + HELP_TEXT;
         };
     }
 

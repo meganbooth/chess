@@ -11,19 +11,19 @@ public class PreloginClient implements Client{
     private boolean switchForward = false;
     private boolean switchBackward = false;
     private String authToken = null;
+    private static final String HELP_TEXT = """
+        Available commands:
+          register - create a new account
+          login - sign in to an existing account
+          quit - exit the program
+          help - show this menu
+        """;
 
     Scanner scanner = new Scanner(System.in);
 
     public String handleInput(String input) {
         return switch (input) {
-            case "help" ->
-                    """
-                    Available commands:
-                      register - create a new account
-                      login - sign in to an existing account
-                      quit - exit the program
-                      help - show this menu
-                    """;
+            case "help" -> HELP_TEXT;
             case "quit" -> {
                 switchBackward = true;
                 yield "Thanks for playing!";
@@ -67,14 +67,7 @@ public class PreloginClient implements Client{
                     yield "Error: Incorrect username or password.";
                 }
             }
-            default -> """
-                    Command not recognized.
-                    Available commands:
-                      register - create a new account
-                      login - sign in to an existing account
-                      quit - exit the program
-                      help - show this menu
-                    """;
+            default -> "Command not recognized.\n" + HELP_TEXT;
         };
     }
     public boolean shouldSwitchForward() {

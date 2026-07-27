@@ -12,6 +12,11 @@ public class GameplayClient implements Client {
     private boolean switchBackward = false;
     private String authToken = null;
     private String selectedColor;
+    private static final String HELP_TEXT = """
+        Available commands:
+          quit - exit the game
+          help - show this menu
+        """;
 
     Scanner scanner = new Scanner(System.in);
 
@@ -30,21 +35,12 @@ public class GameplayClient implements Client {
 
     public String handleInput(String input) {
         return switch (input) {
-            case "help" -> """
-                    Available commands:
-                      quit - exit the game
-                      help - show this menu
-                    """;
+            case "help" -> HELP_TEXT;
             case "quit" -> {
                 switchBackward = true;
                 yield "You left the game.";
             }
-            default -> """
-                    Command not recognized.
-                    Available commands:
-                      quit - exit the game
-                      help - show this menu
-                    """;
+            default -> "Command not recognized.\n" + HELP_TEXT;
         };
     }
 
