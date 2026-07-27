@@ -10,6 +10,7 @@ public class BoardDrawer {
         ChessBoard board = new ChessBoard();
         board.resetBoard();
         System.out.println(drawWhitePerspective(board));
+        System.out.println(drawBlackPerspective(board));
     }
 
     public static String drawWhitePerspective(ChessBoard board) {
@@ -18,13 +19,17 @@ public class BoardDrawer {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 if (i == 0 || i == 9) {
-                    appendColumnLabels(j, boardText);
+                    if (j == 0 || j == 9) {
+                        boardText.append("  ");
+                    } else {
+                        appendColumnLabels((char) ('a' + j - 1), boardText);
+                    }
                 } else {
                     if (j == 0 || j == 9) {
-                       boardText.append(" ").append(9 - i).append(" ");
+                        boardText.append(" ").append(9 - i).append(" ");
                     } else {
-                        appendSquareColors(i, j, boardText);
-                        appendPieceSymbols(board, i, j, boardText);
+                        appendSquareColors(9 - i, j, boardText);
+                        appendPieceSymbols(board, 9 - i, j, boardText);
                     }
                 }
                 boardText.append(EscapeSequences.RESET_BG_COLOR);
@@ -35,8 +40,35 @@ public class BoardDrawer {
         return boardText.toString();
     }
 
-    private static void appendPieceSymbols(ChessBoard board, int i, int j, StringBuilder boardText) {
-        ChessPiece piece = board.getPiece(new ChessPosition((9 - i), j));
+    public static String drawBlackPerspective(ChessBoard board) {
+        StringBuilder boardText = new StringBuilder();
+
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (i == 0 || i == 9) {
+                    if (j == 0 || j == 9) {
+                        boardText.append("  ");
+                    } else {
+                        appendColumnLabels((char) ('a' + (9 - j) - 1), boardText);
+                    }
+                } else {
+                    if (j == 0 || j == 9) {
+                        boardText.append(" ").append(i).append(" ");
+                    } else {
+                        appendSquareColors(i, 9 - j, boardText);
+                        appendPieceSymbols(board, i, 9 - j, boardText);
+                    }
+                }
+                boardText.append(EscapeSequences.RESET_BG_COLOR);
+                boardText.append(EscapeSequences.RESET_TEXT_COLOR);
+            }
+            boardText.append("\n");
+        }
+        return boardText.toString();
+    }
+
+    private static void appendPieceSymbols(ChessBoard board, int chessRow, int chessCol, StringBuilder boardText) {
+        ChessPiece piece = board.getPiece(new ChessPosition(chessRow, chessCol));
         if (piece != null && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
             boardText.append(EscapeSequences.SET_TEXT_COLOR_WHITE);
             appendWhitePieceSymbol(piece, boardText);
@@ -48,20 +80,16 @@ public class BoardDrawer {
         }
     }
 
-    private static void appendSquareColors(int i, int j, StringBuilder boardText) {
-        if (((9 - i) + j) % 2 == 1) {
+    private static void appendSquareColors(int chessRow, int chessCol, StringBuilder boardText) {
+        if ((chessRow + chessCol) % 2 == 1) {
             boardText.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
         } else {
             boardText.append(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
         }
     }
 
-    private static void appendColumnLabels(int j, StringBuilder boardText) {
-        if (j == 0 || j == 9) {
-            boardText.append("  ");
-        } else {
-            boardText.append(" ").append((char) ('a' + j - 1)).append("  ");
-        }
+    private static void appendColumnLabels(char letter, StringBuilder boardText) {
+        boardText.append(" ").append(letter).append("  ");
     }
 
     private static void appendWhitePieceSymbol(ChessPiece piece, StringBuilder boardText) {
