@@ -1,10 +1,7 @@
 package client;
 
 import model.GameData;
-import model.result.CreateGameResult;
 import model.result.ListGamesResult;
-import model.result.LoginResult;
-import model.result.RegisterResult;
 
 import java.util.ArrayList;
 import java.util.List;
