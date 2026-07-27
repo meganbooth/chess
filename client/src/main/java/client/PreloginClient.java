@@ -77,4 +77,5 @@ public class PreloginClient implements Client{
     public String getAuthToken() {
         return authToken;
     }
+    public String getColor() {return null;}
 }

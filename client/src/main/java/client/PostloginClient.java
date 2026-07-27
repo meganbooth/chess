@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessBoard;
 import model.GameData;
 import model.result.ListGamesResult;
 
@@ -13,6 +14,7 @@ public class PostloginClient implements Client {
     private boolean switchForward = false;
     private boolean switchBackward = false;
     private String authToken = null;
+    private String selectedColor;
 
     List<GameData> games;
     Scanner scanner = new Scanner(System.in);
@@ -48,6 +50,7 @@ public class PostloginClient implements Client {
                     System.out.print("Game Number: ");
                     int gameNumber = Integer.parseInt(scanner.nextLine());
                     int gameID = games.get(gameNumber - 1).gameID();
+                    this.selectedColor = "WHITE";
                     switchForward = true;
                     yield "Observing game";
                 } catch (Exception e) {
@@ -63,7 +66,9 @@ public class PostloginClient implements Client {
                     int gameID = games.get(gameNumber - 1).gameID();
                     System.out.print("Color: ");
                     String color = scanner.nextLine();
+                    this.selectedColor = color.toUpperCase();
                     facade.joinGame(color.toUpperCase(),gameID,authToken);
+                    switchForward = true;
                     yield "Welcome";
                 } catch(Exception e) {
                     yield "Error: could not join game.";
@@ -119,4 +124,5 @@ public class PostloginClient implements Client {
     public String getAuthToken() {
         return authToken;
     }
+    public String getColor() {return selectedColor;}
 }

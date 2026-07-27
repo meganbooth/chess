@@ -17,7 +17,7 @@ public class Repl {
                 if(currentClient instanceof PreloginClient) {
                     currentClient = new PostloginClient(currentClient.getAuthToken());
                 } else {
-                    currentClient = new GameplayClient();
+                    currentClient = new GameplayClient(currentClient.getAuthToken(),currentClient.getColor());
                 }
             }
 

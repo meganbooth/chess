@@ -5,4 +5,5 @@ public interface Client {
     boolean shouldSwitchForward();
     boolean shouldSwitchBackward();
     String getAuthToken();
+    String getColor();
 }

@@ -6,13 +6,6 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 
 public class BoardDrawer {
-    public static void main(String[] args) {
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-        System.out.println(drawWhitePerspective(board));
-        System.out.println(drawBlackPerspective(board));
-    }
-
     public static String drawWhitePerspective(ChessBoard board) {
         StringBuilder boardText = new StringBuilder();
 
