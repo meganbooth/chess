@@ -3,25 +3,16 @@ package client;
 import chess.ChessBoard;
 import ui.BoardDrawer;
 
-import java.util.Scanner;
-
-public class GameplayClient implements Client {
+public class GameplayClient extends AbstractClient {
     public ServerFacade facade = new ServerFacade(8080);
-
-    private boolean switchForward = false;
-    private boolean switchBackward = false;
-    private String authToken = null;
-    private String selectedColor;
     private static final String HELP_TEXT = """
         Available commands:
           quit - exit the game
           help - show this menu
         """;
 
-    Scanner scanner = new Scanner(System.in);
-
     public GameplayClient(String authToken, String color) {
-        this.authToken = authToken;
+        super(authToken);
         this.selectedColor = color.toUpperCase();
 
         ChessBoard board = new ChessBoard();
@@ -43,15 +34,4 @@ public class GameplayClient implements Client {
             default -> "Command not recognized.\n" + HELP_TEXT;
         };
     }
-
-    public boolean shouldSwitchForward() {
-        return switchForward;
-    }
-    public boolean shouldSwitchBackward() {
-        return switchBackward;
-    }
-    public String getAuthToken() {
-        return authToken;
-    }
-    public String getColor() {return selectedColor;}
 }

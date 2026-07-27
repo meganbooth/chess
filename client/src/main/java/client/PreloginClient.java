@@ -3,14 +3,8 @@ package client;
 import model.result.LoginResult;
 import model.result.RegisterResult;
 
-import java.util.Scanner;
-
-public class PreloginClient implements Client{
+public class PreloginClient extends AbstractClient {
     public ServerFacade facade = new ServerFacade(8080);
-
-    private boolean switchForward = false;
-    private boolean switchBackward = false;
-    private String authToken = null;
     private static final String HELP_TEXT = """
         Available commands:
           register - create a new account
@@ -18,8 +12,6 @@ public class PreloginClient implements Client{
           quit - exit the program
           help - show this menu
         """;
-
-    Scanner scanner = new Scanner(System.in);
 
     public String handleInput(String input) {
         return switch (input) {
@@ -70,14 +62,4 @@ public class PreloginClient implements Client{
             default -> "Command not recognized.\n" + HELP_TEXT;
         };
     }
-    public boolean shouldSwitchForward() {
-        return switchForward;
-    }
-    public boolean shouldSwitchBackward() {
-        return switchBackward;
-    }
-    public String getAuthToken() {
-        return authToken;
-    }
-    public String getColor() {return null;}
 }

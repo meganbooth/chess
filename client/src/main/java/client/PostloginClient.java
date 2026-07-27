@@ -1,20 +1,14 @@
 package client;
 
-import chess.ChessBoard;
 import model.GameData;
 import model.result.ListGamesResult;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-public class PostloginClient implements Client {
+public class PostloginClient extends AbstractClient {
     public ServerFacade facade = new ServerFacade(8080);
-
-    private boolean switchForward = false;
-    private boolean switchBackward = false;
-    private String authToken = null;
-    private String selectedColor;
+    List<GameData> games;
     private static final String HELP_TEXT = """
         Available commands:
           list - list all existing games
@@ -25,11 +19,8 @@ public class PostloginClient implements Client {
           help - show this menu
         """;
 
-    List<GameData> games;
-    Scanner scanner = new Scanner(System.in);
-
     public PostloginClient(String authToken) {
-        this.authToken = authToken;
+        super(authToken);
     }
 
     public String handleInput(String input) {
@@ -109,15 +100,4 @@ public class PostloginClient implements Client {
             default -> "Command not recognized.\n" + HELP_TEXT;
         };
     }
-
-    public boolean shouldSwitchForward() {
-        return switchForward;
-    }
-    public boolean shouldSwitchBackward() {
-        return switchBackward;
-    }
-    public String getAuthToken() {
-        return authToken;
-    }
-    public String getColor() {return selectedColor;}
 }
