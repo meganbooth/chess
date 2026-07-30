@@ -1,8 +1,9 @@
 package server.websocket;
 
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.ServerMessage;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,5 +27,17 @@ public class ConnectionManager {
         }
     }
 
-    
+    public void broadcast(int gameID, ServerMessage message, Session excludeSession) throws Exception {
+        var serializer = new Gson();
+        String json = serializer.toJson(message);
+
+        if(connections.containsKey(gameID)) {
+            Set<Session> gameSessions = connections.get(gameID);
+            for(Session session : gameSessions) {
+                if(session != excludeSession){
+                    session.getRemote().sendString(json);
+                }
+            }
+        }
+    }
 }

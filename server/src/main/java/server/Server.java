@@ -5,6 +5,7 @@ import dataaccess.*;
 import handler.*;
 import io.javalin.*;
 import server.websocket.ConnectionManager;
+import server.websocket.WebSocketHandler;
 import service.*;
 
 public class Server {
@@ -58,9 +59,13 @@ public class Server {
         var joinGameHandler = new JoinGameHandler(joinGameService);
         javalin.put("/game", ctx -> joinGameHandler.handle(ctx));
 
+        var webSocketHandler = new WebSocketHandler(mySqlAuthDAO, mySqlGameDAO, connectionManager);
         javalin.ws("/ws", ws -> {
             ws.onConnect(ctx -> {
                 System.out.println("connected: " + ctx.session);
+            });
+            ws.onMessage(ctx -> {
+                webSocketHandler.handle(ctx.message(), ctx.session);
             });
         });
 
