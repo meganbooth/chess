@@ -15,6 +15,7 @@ public class ChessGame {
 
     private TeamColor turn;
     private ChessBoard board;
+    private boolean gameOver;
 
     // Castling Vars
     private boolean whiteKingMoved;
@@ -51,6 +52,7 @@ public class ChessGame {
     public ChessGame() {
         this.turn = TeamColor.WHITE;
         this.board = new ChessBoard();
+        this.gameOver = false;
         this.board.resetBoard();
 
         this.whiteKingMoved = false;
@@ -60,6 +62,14 @@ public class ChessGame {
         this.blackKingsideRookMoved = false;
         this.blackQueensideRookMoved = false;
         this.pawnDoubleMove = null;
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
     }
 
     private void moveCastlingRook(ChessPosition rookStart, ChessPosition rookEnd){

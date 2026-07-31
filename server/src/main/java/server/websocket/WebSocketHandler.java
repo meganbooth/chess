@@ -36,6 +36,7 @@ public class WebSocketHandler {
                 makeMove(session,makeMoveCommand);
             }
             case LEAVE -> leave(session,userGameCommand);
+            case RESIGN -> resign(session,userGameCommand);
         }
     }
 
@@ -150,6 +151,42 @@ public class WebSocketHandler {
                     + " has left the game"), session);
         }
         connectionManager.remove(command.gameID, session);
+    }
+
+    public void resign(Session session, UserGameCommand command) throws Exception {
+        AuthData authData = mySqlAuthDAO.getAuth(command.authToken);
+        if (validateAuthToken(session, authData)) {
+            return;
+        }
+
+        GameData gameData = mySqlGameDAO.getGame(command.gameID);
+        if (validateGame(session, gameData)) {
+            return;
+        }
+
+        boolean playerIsWhite = authData.username().equals(gameData.whiteUsername());
+        boolean playerIsBlack = authData.username().equals(gameData.blackUsername());
+
+        if (!playerIsWhite && !playerIsBlack) {
+            sendMessage(session, new ErrorMessage("Error: observers can't resign"));
+            return;
+        }
+
+        if (gameData.game().isGameOver()) {
+            sendMessage(session, new ErrorMessage("Error: game is already over"));
+        } else {
+            gameData.game().setGameOver(true);
+            mySqlGameDAO.updateGame(gameData);
+
+            if (playerIsWhite) {
+                connectionManager.broadcast(command.gameID, new NotificationMessage(gameData.whiteUsername()
+                        + " resigned"), null);
+            } else {
+
+                connectionManager.broadcast(command.gameID, new NotificationMessage(gameData.blackUsername()
+                        + " resigned"), null);
+            }
+        }
     }
 
     public void sendMessage(Session session, ServerMessage message) throws Exception {
