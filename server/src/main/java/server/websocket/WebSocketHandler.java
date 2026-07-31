@@ -3,7 +3,6 @@ package server.websocket;
 import chess.ChessGame;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
 import dataaccess.MySqlAuthDAO;
 import dataaccess.MySqlGameDAO;
 import model.AuthData;
@@ -36,6 +35,7 @@ public class WebSocketHandler {
                 MakeMoveCommand makeMoveCommand = serializer.fromJson(message, MakeMoveCommand.class);
                 makeMove(session,makeMoveCommand);
             }
+            case LEAVE -> leave(session,userGameCommand);
         }
     }
 
@@ -117,6 +117,39 @@ public class WebSocketHandler {
             sendMessage(session, new ErrorMessage("Error: you are observing"));
             return;
         }
+    }
+
+    public void leave(Session session, UserGameCommand command) throws Exception {
+        AuthData authData = mySqlAuthDAO.getAuth(command.authToken);
+        if (validateAuthToken(session, authData)) {
+            return;
+        }
+
+        GameData gameData = mySqlGameDAO.getGame(command.gameID);
+        if (validateGame(session, gameData)) {
+            return;
+        }
+
+        boolean playerIsWhite = authData.username().equals(gameData.whiteUsername());
+        boolean playerIsBlack = authData.username().equals(gameData.blackUsername());
+
+        if (playerIsWhite) {
+            GameData tempGameData = new GameData(command.gameID,null, gameData.blackUsername(),
+                    gameData.gameName(), gameData.game());
+            mySqlGameDAO.updateGame(tempGameData);
+            connectionManager.broadcast(command.gameID, new NotificationMessage(gameData.whiteUsername()
+                    + " has left the game"), session);
+        } else if (playerIsBlack) {
+            GameData tempGameData = new GameData(command.gameID,gameData.whiteUsername(), null,
+                    gameData.gameName(), gameData.game());
+            mySqlGameDAO.updateGame(tempGameData);
+            connectionManager.broadcast(command.gameID, new NotificationMessage(gameData.blackUsername()
+                    + " has left the game"), session);
+        } else {
+            connectionManager.broadcast(command.gameID, new NotificationMessage(authData.username()
+                    + " has left the game"), session);
+        }
+        connectionManager.remove(command.gameID, session);
     }
 
     public void sendMessage(Session session, ServerMessage message) throws Exception {
