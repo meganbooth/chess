@@ -10,11 +10,13 @@ import websocket.messages.ServerMessage;
 public class GameplayClient extends AbstractClient implements ServerMessageObserver{
     public ServerFacade serverFacade = new ServerFacade(8080);
     public WebSocketFacade webSocketFacade;
+    private ChessBoard currentBoard;
 
     private static final String HELP_TEXT = """
         Available commands:
           quit - exit the game
           help - show this menu
+          redraw - redraws the board
         """;
 
     public GameplayClient(String authToken, String color, int gameID) throws Exception {
@@ -25,9 +27,9 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
         webSocketFacade = new WebSocketFacade("http://localhost:8080", this);
         webSocketFacade.connect(authToken, gameID);
 
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-        drawBoard(board);
+        this.currentBoard = new ChessBoard();
+        this.currentBoard.resetBoard();
+        drawBoard(this.currentBoard);
     }
 
     public String handleInput(String input) {
@@ -37,6 +39,10 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
                 switchBackward = true;
                 yield "You left the game.";
             }
+            case "redraw" -> {
+                drawBoard(currentBoard);
+                yield "";
+            }
             default -> "Command not recognized.\n" + HELP_TEXT;
         };
     }
@@ -45,8 +51,8 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
         switch(message.serverMessageType) {
             case LOAD_GAME -> {
                 LoadGameMessage loadGameMessage = (LoadGameMessage) message;
-                ChessBoard board = loadGameMessage.getGame().game().getBoard();
-                drawBoard(board);
+                this.currentBoard = loadGameMessage.getGame().game().getBoard();
+                drawBoard(this.currentBoard);
             }
             case NOTIFICATION -> {
                 NotificationMessage notificationMessage = (NotificationMessage) message;
