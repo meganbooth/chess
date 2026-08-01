@@ -6,4 +6,5 @@ public interface Client {
     boolean shouldSwitchBackward();
     String getAuthToken();
     String getColor();
+    int getGameID();
 }

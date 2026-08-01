@@ -6,6 +6,8 @@ public class AbstractClient implements Client {
     Scanner scanner = new Scanner(System.in);
     protected String authToken = null;
     protected String selectedColor;
+
+    protected int gameID;
     protected boolean switchForward = false;
     protected boolean switchBackward = false;
 
@@ -35,5 +37,9 @@ public class AbstractClient implements Client {
 
     public String getColor() {
         return selectedColor;
+    }
+
+    public int getGameID() {
+        return gameID;
     }
 }

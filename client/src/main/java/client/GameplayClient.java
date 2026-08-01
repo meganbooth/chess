@@ -8,16 +8,22 @@ import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 public class GameplayClient extends AbstractClient implements ServerMessageObserver{
-    public ServerFacade facade = new ServerFacade(8080);
+    public ServerFacade serverFacade = new ServerFacade(8080);
+    public WebSocketFacade webSocketFacade;
+
     private static final String HELP_TEXT = """
         Available commands:
           quit - exit the game
           help - show this menu
         """;
 
-    public GameplayClient(String authToken, String color) {
+    public GameplayClient(String authToken, String color, int gameID) throws Exception {
         super(authToken);
         this.selectedColor = color.toUpperCase();
+        this.gameID = gameID;
+
+        webSocketFacade = new WebSocketFacade("http://localhost:8080", this);
+        webSocketFacade.connect(authToken, gameID);
 
         ChessBoard board = new ChessBoard();
         board.resetBoard();

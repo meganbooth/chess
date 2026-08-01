@@ -41,7 +41,7 @@ public class PostloginClient extends AbstractClient {
                     games = new ArrayList<>(listResult.games());
                     System.out.print("Game Number: ");
                     int gameNumber = Integer.parseInt(scanner.nextLine());
-                    int gameID = games.get(gameNumber - 1).gameID();
+                    this.gameID = games.get(gameNumber - 1).gameID();
                     this.selectedColor = "WHITE";
                     switchForward = true;
                     yield "Observing game";
@@ -55,7 +55,7 @@ public class PostloginClient extends AbstractClient {
                     games = new ArrayList<>(listResult.games());
                     System.out.print("Game Number: ");
                     int gameNumber = Integer.parseInt(scanner.nextLine());
-                    int gameID = games.get(gameNumber - 1).gameID();
+                    this.gameID = games.get(gameNumber - 1).gameID();
                     System.out.print("Color: ");
                     String color = scanner.nextLine();
                     this.selectedColor = color.toUpperCase();

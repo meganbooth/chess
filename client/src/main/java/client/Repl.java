@@ -17,7 +17,12 @@ public class Repl {
                 if(currentClient instanceof PreloginClient) {
                     currentClient = new PostloginClient(currentClient.getAuthToken());
                 } else {
-                    currentClient = new GameplayClient(currentClient.getAuthToken(),currentClient.getColor());
+                    try {
+                        currentClient = new GameplayClient(currentClient.getAuthToken(),
+                                currentClient.getColor(), currentClient.getGameID());
+                    } catch (Exception e) {
+                        System.out.println("Error: could not connect to game.");
+                    }
                 }
             }
 
