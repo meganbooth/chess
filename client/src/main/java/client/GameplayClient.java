@@ -1,11 +1,16 @@
 package client;
 
 import chess.ChessBoard;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import ui.BoardDrawer;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
+
+import java.io.IOException;
 
 public class GameplayClient extends AbstractClient implements ServerMessageObserver{
     public ServerFacade serverFacade = new ServerFacade(8080);
@@ -43,6 +48,32 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
                 drawBoard(currentBoard);
                 yield "";
             }
+            case "move" -> {
+                System.out.print("Piece Position: ");
+                String startString = scanner.nextLine();
+                ChessPosition startPosition = parsePosition(startString);
+
+                System.out.print("Move to: ");
+                String endString = scanner.nextLine();
+                ChessPosition endPosition = parsePosition(endString);
+
+                ChessPiece piece = currentBoard.getPiece(startPosition);
+                ChessPiece.PieceType promotionType = null;
+                if (piece.getPieceType() == ChessPiece.PieceType.PAWN &&
+                        (endPosition.getRow() == 8 || endPosition.getRow() == 1)) {
+                    System.out.print("Promote to: ");
+                    String promotionString = scanner.nextLine();
+
+                    promotionType = convertPromotion(promotionString);
+                }
+                ChessMove move = new ChessMove(startPosition,endPosition,promotionType);
+                try {
+                    webSocketFacade.makeMove(authToken, gameID, move);
+                } catch (IOException e) {
+                    yield "Error: move not made";
+                }
+                yield "Piece moved";
+            }
             default -> "Command not recognized.\n" + HELP_TEXT;
         };
     }
@@ -71,5 +102,37 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
         } else {
             System.out.println(BoardDrawer.drawWhitePerspective(board));
         }
+    }
+
+    private ChessPosition parsePosition(String positionString) {
+        char colChar = positionString.charAt(0);
+        char rowChar = positionString.charAt(1);
+
+        int colPosition = colChar - 'a' + 1;
+        int rowPosition = Character.getNumericValue(rowChar);
+
+        return new ChessPosition (rowPosition,colPosition);
+    }
+
+    private static ChessPiece.PieceType convertPromotion(String promotionString) {
+        ChessPiece.PieceType promotionType = null;
+        switch(promotionString.toUpperCase()) {
+            case "BISHOP" -> {
+                promotionType = ChessPiece.PieceType.BISHOP;
+            }
+            case "ROOK" -> {
+                promotionType = ChessPiece.PieceType.ROOK;
+            }
+            case "KNIGHT" -> {
+                promotionType = ChessPiece.PieceType.KNIGHT;
+            }
+            case "QUEEN" -> {
+                promotionType = ChessPiece.PieceType.QUEEN;
+            }
+            default -> {
+                System.out.print("Promotion type not recognized");
+            }
+        }
+        return promotionType;
     }
 }
