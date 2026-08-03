@@ -1,9 +1,6 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import ui.BoardDrawer;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -15,7 +12,7 @@ import java.io.IOException;
 public class GameplayClient extends AbstractClient implements ServerMessageObserver{
     public ServerFacade serverFacade = new ServerFacade(8080);
     public WebSocketFacade webSocketFacade;
-    private ChessBoard currentBoard;
+    private ChessGame currentGame;
 
     private static final String HELP_TEXT = """
         Available commands:
@@ -32,9 +29,8 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
         webSocketFacade = new WebSocketFacade("http://localhost:8080", this);
         webSocketFacade.connect(authToken, gameID);
 
-        this.currentBoard = new ChessBoard();
-        this.currentBoard.resetBoard();
-        drawBoard(this.currentBoard);
+        this.currentGame = new ChessGame();
+        drawBoard(currentGame.getBoard());
     }
 
     public String handleInput(String input) {
@@ -45,7 +41,7 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
                 yield "You left the game.";
             }
             case "redraw" -> {
-                drawBoard(currentBoard);
+                drawBoard(currentGame.getBoard());
                 yield "";
             }
             case "move" -> {
@@ -57,7 +53,7 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
                 String endString = scanner.nextLine();
                 ChessPosition endPosition = parsePosition(endString);
 
-                ChessPiece piece = currentBoard.getPiece(startPosition);
+                ChessPiece piece = currentGame.getBoard().getPiece(startPosition);
                 ChessPiece.PieceType promotionType = null;
                 if (piece.getPieceType() == ChessPiece.PieceType.PAWN &&
                         (endPosition.getRow() == 8 || endPosition.getRow() == 1)) {
@@ -74,6 +70,9 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
                 }
                 yield "Piece moved";
             }
+            case "highlight" -> {
+
+            }
             default -> "Command not recognized.\n" + HELP_TEXT;
         };
     }
@@ -82,8 +81,8 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
         switch(message.serverMessageType) {
             case LOAD_GAME -> {
                 LoadGameMessage loadGameMessage = (LoadGameMessage) message;
-                this.currentBoard = loadGameMessage.getGame().game().getBoard();
-                drawBoard(this.currentBoard);
+                this.currentGame = loadGameMessage.getGame().game();
+                drawBoard(currentGame.getBoard());
             }
             case NOTIFICATION -> {
                 NotificationMessage notificationMessage = (NotificationMessage) message;
