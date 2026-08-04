@@ -33,11 +33,23 @@ public class ConnectionManager {
 
         if(connections.containsKey(gameID)) {
             Set<Session> gameSessions = connections.get(gameID);
-            for(Session session : gameSessions) {
-                if(session != excludeSession){
-                    session.getRemote().sendString(json);
+            for (Session session : gameSessions) {
+                if (session != excludeSession) {
+                    try {
+                        synchronized (session) {
+                            session.getRemote().sendString(json);
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Failed to send to a session: " + e.getMessage());
+                    }
                 }
             }
+        }
+    }
+
+    public void removeSession(Session session) {
+        for (Set<Session> gameSessions : connections.values()) {
+            gameSessions.remove(session);
         }
     }
 }

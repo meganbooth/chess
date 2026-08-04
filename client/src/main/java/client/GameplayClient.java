@@ -18,7 +18,7 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
 
     private static final String HELP_TEXT = """
         Available commands:
-          quit - exit the game
+          quit - leave the game
           help - show this menu
           redraw - redraws the board
           move - make a move
@@ -113,7 +113,7 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
             }
             case NOTIFICATION -> {
                 NotificationMessage notificationMessage = (NotificationMessage) message;
-                System.out.println(notificationMessage.getNotificationMessage());
+                System.out.println(notificationMessage.getMessage());
             }
             case ERROR -> {
                 ErrorMessage errorMessage = (ErrorMessage) message;

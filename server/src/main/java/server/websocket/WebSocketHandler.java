@@ -78,6 +78,11 @@ public class WebSocketHandler {
             return;
         }
 
+        if (gameData.game().isGameOver()) {
+            sendMessage(session, new ErrorMessage("Error: game is over"));
+            return;
+        }
+
         boolean playerIsWhite = authData.username().equals(gameData.whiteUsername());
         boolean playerIsBlack = authData.username().equals(gameData.blackUsername());
         boolean turnIsWhite = gameData.game().getTeamTurn() == ChessGame.TeamColor.WHITE;
@@ -192,7 +197,9 @@ public class WebSocketHandler {
     public void sendMessage(Session session, ServerMessage message) throws Exception {
         var serializer = new Gson();
         String json = serializer.toJson(message);
-        session.getRemote().sendString(json);
+        synchronized (session) {
+            session.getRemote().sendString(json);
+        }
     }
 
     private boolean validateGame(Session session, GameData gameData) throws Exception {

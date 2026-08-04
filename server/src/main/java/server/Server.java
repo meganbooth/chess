@@ -67,6 +67,9 @@ public class Server {
             ws.onMessage(ctx -> {
                 webSocketHandler.handle(ctx.message(), ctx.session);
             });
+            ws.onClose(ctx -> {
+                connectionManager.removeSession(ctx.session);
+            });
         });
 
         javalin.exception(DataAccessException.class, (exception, ctx) -> {
