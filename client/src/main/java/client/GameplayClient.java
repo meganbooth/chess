@@ -23,6 +23,7 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
           redraw - redraws the board
           move - make a move
           highlight - highlight valid moves
+          resign - resign from the game
         """;
 
     public GameplayClient(String authToken, String color, int gameID) throws Exception {
@@ -78,6 +79,21 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
                 }
                 drawHighlight(currentGame.getBoard(),startPosition,legalEndPositions);
                 yield "Valid moves highlighted";
+            }
+            case "resign" -> {
+                System.out.print("Are you sure you want to resign?");
+                System.out.print("Type y to continue: ");
+                String confirmation = scanner.nextLine();
+                if (confirmation.equalsIgnoreCase("y")) {
+                    try {
+                        webSocketFacade.resign(authToken, gameID);
+                        yield "You resigned";
+                    } catch (IOException e) {
+                        yield "Error: could not resign";
+                    }
+                } else {
+                    yield "Resign not confirmed";
+                }
             }
             default -> "Command not recognized.\n" + HELP_TEXT;
         };
