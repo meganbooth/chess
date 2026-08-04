@@ -8,6 +8,8 @@ import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class GameplayClient extends AbstractClient implements ServerMessageObserver{
     public ServerFacade serverFacade = new ServerFacade(8080);
@@ -19,6 +21,8 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
           quit - exit the game
           help - show this menu
           redraw - redraws the board
+          move - make a move
+          highlight - highlight valid moves
         """;
 
     public GameplayClient(String authToken, String color, int gameID) throws Exception {
@@ -45,13 +49,8 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
                 yield "";
             }
             case "move" -> {
-                System.out.print("Piece Position: ");
-                String startString = scanner.nextLine();
-                ChessPosition startPosition = parsePosition(startString);
-
-                System.out.print("Move to: ");
-                String endString = scanner.nextLine();
-                ChessPosition endPosition = parsePosition(endString);
+                ChessPosition startPosition = getStartPosition();
+                ChessPosition endPosition = getEndPosition();
 
                 ChessPiece piece = currentGame.getBoard().getPiece(startPosition);
                 ChessPiece.PieceType promotionType = null;
@@ -71,7 +70,14 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
                 yield "Piece moved";
             }
             case "highlight" -> {
-
+                ChessPosition startPosition = getStartPosition();
+                Collection<ChessMove> legalMoves = currentGame.validMoves(startPosition);
+                Collection<ChessPosition> legalEndPositions = new ArrayList<>();
+                for (ChessMove move : legalMoves) {
+                    legalEndPositions.add(move.getEndPosition());
+                }
+                drawHighlight(currentGame.getBoard(),startPosition,legalEndPositions);
+                yield "Valid moves highlighted";
             }
             default -> "Command not recognized.\n" + HELP_TEXT;
         };
@@ -101,6 +107,27 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
         } else {
             System.out.println(BoardDrawer.drawWhitePerspective(board));
         }
+    }
+
+    private void drawHighlight(ChessBoard board, ChessPosition startPosition,
+                               Collection<ChessPosition> legalEndPositions) {
+        if(getColor().equals("BLACK")){
+            System.out.println(BoardDrawer.drawBlackPerspective(board,startPosition,legalEndPositions));
+        } else {
+            System.out.println(BoardDrawer.drawWhitePerspective(board,startPosition,legalEndPositions));
+        }
+    }
+
+    private ChessPosition getEndPosition() {
+        System.out.print("Move to: ");
+        String endString = scanner.nextLine();
+        return parsePosition(endString);
+    }
+
+    private ChessPosition getStartPosition() {
+        System.out.print("Piece Position: ");
+        String startString = scanner.nextLine();
+        return parsePosition(startString);
     }
 
     private ChessPosition parsePosition(String positionString) {
