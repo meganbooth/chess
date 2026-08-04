@@ -42,8 +42,13 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
         return switch (input) {
             case "help" -> HELP_TEXT;
             case "quit" -> {
-                switchBackward = true;
-                yield "You left the game.";
+                try {
+                    webSocketFacade.leave(authToken, gameID);
+                    switchBackward = true;
+                    yield "You left the game";
+                } catch (IOException e) {
+                    yield "Error: unable to quit the game";
+                }
             }
             case "redraw" -> {
                 drawBoard(currentGame.getBoard());
