@@ -141,12 +141,8 @@ public class BoardDrawer {
 
     private static void appendSquareColors(int chessRow, int chessCol, StringBuilder boardText,
                                            ChessPosition startPosition, Collection<ChessPosition> legalEndPositions) {
-        if (new ChessPosition(chessRow,chessCol).equals(startPosition)) {
-            boardText.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
-            return;
-        }
-
-        if (legalEndPositions.contains(new ChessPosition(chessRow, chessCol))) {
+        if (new ChessPosition(chessRow,chessCol).equals(startPosition)
+                || legalEndPositions.contains(new ChessPosition(chessRow, chessCol))) {
             boardText.append(EscapeSequences.SET_BG_COLOR_GREEN);
             return;
         }

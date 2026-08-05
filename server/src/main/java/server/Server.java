@@ -62,6 +62,7 @@ public class Server {
         var webSocketHandler = new WebSocketHandler(mySqlAuthDAO, mySqlGameDAO, connectionManager);
         javalin.ws("/ws", ws -> {
             ws.onConnect(ctx -> {
+                ctx.enableAutomaticPings();
                 System.out.println("connected: " + ctx.session);
             });
             ws.onMessage(ctx -> {

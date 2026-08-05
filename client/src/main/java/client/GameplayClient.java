@@ -7,7 +7,6 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -35,7 +34,6 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
         webSocketFacade.connect(authToken, gameID);
 
         this.currentGame = new ChessGame();
-        drawBoard(currentGame.getBoard());
     }
 
     public String handleInput(String input) {
@@ -46,7 +44,7 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
                     webSocketFacade.leave(authToken, gameID);
                     switchBackward = true;
                     yield "You left the game";
-                } catch (IOException e) {
+                } catch (Exception e) {
                     yield "Error: unable to quit the game";
                 }
             }
@@ -70,10 +68,10 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
                 ChessMove move = new ChessMove(startPosition,endPosition,promotionType);
                 try {
                     webSocketFacade.makeMove(authToken, gameID, move);
-                } catch (IOException e) {
+                    yield "";
+                } catch (Exception e) {
                     yield "Error: move not made";
                 }
-                yield "Piece moved";
             }
             case "highlight" -> {
                 ChessPosition startPosition = getStartPosition();
@@ -92,8 +90,8 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
                 if (confirmation.equalsIgnoreCase("y")) {
                     try {
                         webSocketFacade.resign(authToken, gameID);
-                        yield "You resigned";
-                    } catch (IOException e) {
+                        yield "";
+                    } catch (Exception e) {
                         yield "Error: could not resign";
                     }
                 } else {

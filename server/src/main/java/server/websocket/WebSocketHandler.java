@@ -1,6 +1,7 @@
 package server.websocket;
 
 import chess.ChessGame;
+import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.MySqlAuthDAO;
@@ -98,9 +99,8 @@ public class WebSocketHandler {
             mySqlGameDAO.updateGame(gameData);
             connectionManager.broadcast(command.gameID, new LoadGameMessage(gameData), null);
             connectionManager.broadcast(command.gameID, new NotificationMessage(authData.username() + " moved from "
-                    + command.move.getStartPosition().getRow() + "," + command.move.getStartPosition().getColumn()
-                    + " to " + command.move.getEndPosition().getRow() + ","
-                    + command.move.getEndPosition().getColumn()), session);
+                    + positionToString(command.move.getStartPosition())
+                    + " to " + positionToString(command.move.getEndPosition())), session);
 
             if (gameData.game().isInCheck(ChessGame.TeamColor.WHITE)) {
                 connectionManager.broadcast(command.gameID, new NotificationMessage("White in check"), null);
@@ -216,5 +216,10 @@ public class WebSocketHandler {
             return true;
         }
         return false;
+    }
+
+    private String positionToString(ChessPosition position) {
+        char column = (char) ('a' + position.getColumn() - 1);
+        return "" + column + position.getRow();
     }
 }
