@@ -31,18 +31,21 @@ public class ConnectionManager {
         var serializer = new Gson();
         String json = serializer.toJson(message);
 
-        if(connections.containsKey(gameID)) {
-            Set<Session> gameSessions = connections.get(gameID);
-            for (Session session : gameSessions) {
-                if (session != excludeSession) {
-                    try {
-                        synchronized (session) {
-                            session.getRemote().sendString(json);
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Failed to send to a session: " + e.getMessage());
-                    }
+        if (!connections.containsKey(gameID)) {
+            return;
+        }
+
+        Set<Session> gameSessions = connections.get(gameID);
+        for (Session session : gameSessions) {
+            if (session == excludeSession) {
+                continue;
+            }
+            try {
+                synchronized (session) {
+                    session.getRemote().sendString(json);
                 }
+            } catch (Exception e) {
+                System.out.println("Failed to send to a session: " + e.getMessage());
             }
         }
     }
