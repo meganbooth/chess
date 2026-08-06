@@ -53,8 +53,14 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
                 yield "";
             }
             case "move" -> {
-                ChessPosition startPosition = getStartPosition();
-                ChessPosition endPosition = getEndPosition();
+                ChessPosition startPosition;
+                ChessPosition endPosition;
+                try {
+                    startPosition = getStartPosition();
+                    endPosition = getEndPosition();
+                } catch (Exception e) {
+                    yield "Error: invalid position";
+                }
 
                 ChessPiece piece = currentGame.getBoard().getPiece(startPosition);
                 ChessPiece.PieceType promotionType = null;
@@ -149,15 +155,22 @@ public class GameplayClient extends AbstractClient implements ServerMessageObser
         return parsePosition(startString);
     }
 
-    private ChessPosition parsePosition(String positionString) {
-        char colChar = positionString.charAt(0);
-        char rowChar = positionString.charAt(1);
+        private ChessPosition parsePosition(String positionString) {
+            if(positionString.length() != 2
+                    || positionString.charAt(0) < 'a'
+                    || positionString.charAt(0) > 'h'
+                    || Character.getNumericValue(positionString.charAt(1)) < 1
+                    || Character.getNumericValue(positionString.charAt(1)) > 8) {
+                throw new IllegalArgumentException();
+            }
+            char colChar = positionString.charAt(0);
+            char rowChar = positionString.charAt(1);
 
-        int colPosition = colChar - 'a' + 1;
-        int rowPosition = Character.getNumericValue(rowChar);
+            int colPosition = colChar - 'a' + 1;
+            int rowPosition = Character.getNumericValue(rowChar);
 
-        return new ChessPosition (rowPosition,colPosition);
-    }
+            return new ChessPosition (rowPosition,colPosition);
+        }
 
     private static ChessPiece.PieceType convertPromotion(String promotionString) {
         ChessPiece.PieceType promotionType = null;

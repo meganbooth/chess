@@ -102,18 +102,26 @@ public class WebSocketHandler {
                     + positionToString(command.move.getStartPosition())
                     + " to " + positionToString(command.move.getEndPosition())), session);
 
-            if (gameData.game().isInCheck(ChessGame.TeamColor.WHITE)) {
+            if (gameData.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
+                connectionManager.broadcast(command.gameID, new NotificationMessage("White in checkmate"), null);
+                gameData.game().setGameOver(true);
+                mySqlGameDAO.updateGame(gameData);
+            } else if (gameData.game().isInCheckmate(ChessGame.TeamColor.BLACK)) {
+                connectionManager.broadcast(command.gameID, new NotificationMessage("Black in checkmate"), null);
+                gameData.game().setGameOver(true);
+                mySqlGameDAO.updateGame(gameData);
+            } else if (gameData.game().isInCheck(ChessGame.TeamColor.WHITE)) {
                 connectionManager.broadcast(command.gameID, new NotificationMessage("White in check"), null);
             } else if (gameData.game().isInCheck(ChessGame.TeamColor.BLACK)) {
                 connectionManager.broadcast(command.gameID, new NotificationMessage("Black in check"), null);
-            } else if (gameData.game().isInCheckmate(ChessGame.TeamColor.WHITE)) {
-                connectionManager.broadcast(command.gameID, new NotificationMessage("White in checkmate"), null);
-            } else if (gameData.game().isInCheckmate(ChessGame.TeamColor.BLACK)) {
-                connectionManager.broadcast(command.gameID, new NotificationMessage("Black in checkmate"), null);
             } else if (gameData.game().isInStalemate(ChessGame.TeamColor.WHITE)) {
                 connectionManager.broadcast(command.gameID, new NotificationMessage("White in stalemate"), null);
+                gameData.game().setGameOver(true);
+                mySqlGameDAO.updateGame(gameData);
             } else if (gameData.game().isInStalemate(ChessGame.TeamColor.BLACK)) {
                 connectionManager.broadcast(command.gameID, new NotificationMessage("Black in stalemate"), null);
+                gameData.game().setGameOver(true);
+                mySqlGameDAO.updateGame(gameData);
             }
 
         } else if (playerIsWhite && !turnIsWhite || playerIsBlack && !turnIsBlack) {
